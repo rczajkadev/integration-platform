@@ -1,1 +1,1 @@
-# pd-integration-platform
+# Integration Platform
