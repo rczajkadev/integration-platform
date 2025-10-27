@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <AssemblyName>Integrations.Todoist</AssemblyName>
+    <RootNamespace>Integrations.Todoist</RootNamespace>
     <AzureFunctionsVersion>V4</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
