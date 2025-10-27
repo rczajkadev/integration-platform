@@ -1,0 +1,8 @@
+{
+  "solution": {
+    "path": "..\\..\\integration-platform.slnx",
+    "projects": [
+      "integrations\\Todoist\\src\\Todoist.csproj"
+    ]
+  }
+}

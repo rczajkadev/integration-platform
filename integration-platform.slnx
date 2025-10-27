@@ -1,0 +1,3 @@
+﻿<Solution>
+  <Project Path="integrations\Todoist\src\Todoist.csproj" Type="Classic C#" />
+</Solution>
