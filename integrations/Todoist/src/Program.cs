@@ -1,5 +1,5 @@
 using System.Net.Http.Headers;
-using Integrations.Todoist;
+using Integrations.Todoist.TodoistClient;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
