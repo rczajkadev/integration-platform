@@ -4,8 +4,8 @@
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "WEBSITE_TIME_ZONE": "Central European Standard Time",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "SubtaskLabelsCheckSchedule":  "0 0 2 * * *",
     "TodoistApiBaseUrl": "https://api.todoist.com/api/v1",
-    "TodoistApiKey": "<todoist-api-key>"
+    "TodoistApiKey": "<todoist-api-key>",
+    "SubtaskLabelsCheckSchedule":  "0 0 2 * * *"
   }
 }

@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 namespace Integrations.Todoist.Functions;
 
 /// <summary>
-/// Adds a 'subtask' label to all subtasks. Removes other labels.
+/// Removes the 'subtask' label from all non-subtasks.
 /// </summary>
-internal sealed class SetSubtaskLabels(ITodoistApi todoist, ILogger<SetSubtaskLabels> logger)
+internal sealed class RemoveSubtaskLabels(ITodoistApi todoist, ILogger<RemoveSubtaskLabels> logger)
 {
-    [Function(nameof(SetSubtaskLabels))]
+    [Function(nameof(RemoveSubtaskLabels))]
     public async Task RunAsync(
         [TimerTrigger("%SubtaskLabelsCheckSchedule%", UseMonitor = false, RunOnStartup = true)] TimerInfo _,
         CancellationToken cancellationToken)
@@ -21,29 +21,30 @@ internal sealed class SetSubtaskLabels(ITodoistApi todoist, ILogger<SetSubtaskLa
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error while setting subtask labels.");
+            logger.LogError(ex, "Error while removing subtask labels.");
             throw;
         }
     }
 
     private async Task HandleFunctionAsync(CancellationToken cancellationToken)
     {
-        var tasks = (await todoist.GetAllTasksByFilterAsync("subtask", cancellationToken))
-            .Where(t => !string.IsNullOrWhiteSpace(t.ParentId)) // just to make sure
-            .Where(t => !t.Labels.Contains(Constants.SubtaskLabel) || t.Labels.Count() > 1)
-            .ToList();
+        const string query = $"!subtask & @{Constants.SubtaskLabel}";
+        var tasks = (await todoist.GetAllTasksByFilterAsync(query, cancellationToken)).ToList();
 
         if (tasks.Count == 0)
         {
-            logger.LogInformation("No subtasks to update.");
+            logger.LogInformation("No tasks to update.");
             return;
         }
 
         var updatedCount = await todoist.UpdateTasksAsync(
             tasks,
-            _ => new TodoistUpdateTaskRequest { Labels = [Constants.SubtaskLabel] },
+            task => new TodoistUpdateTaskRequest
+            {
+                Labels = task.Labels.Where(label => label != Constants.SubtaskLabel)
+            },
             cancellationToken: cancellationToken);
 
-        logger.LogInformation("Updated labels for {UpdatedCount} subtasks.", updatedCount);
+        logger.LogInformation("Updated labels for {UpdatedCount} tasks.", updatedCount);
     }
 }
