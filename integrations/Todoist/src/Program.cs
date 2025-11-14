@@ -1,4 +1,3 @@
-using System;
 using System.Net.Http.Headers;
 using Integrations.Todoist;
 using Microsoft.Azure.Functions.Worker;
