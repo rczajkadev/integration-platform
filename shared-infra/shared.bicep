@@ -1,10 +1,13 @@
 param projectName string
+param integrationName string
 param location string = resourceGroup().location
+
+var resourceName = '${projectName}-${integrationName}'
 
 var storageSuffixLength = 3
 var uniqueStorageSuffix = take(uniqueString(subscription().id, location), storageSuffixLength)
-var projectNameWithoutHyphens = replace(projectName, '-', '')
-var storageAccountName = 'st${projectNameWithoutHyphens}${uniqueStorageSuffix}'
+var resourceNameWithoutHyphens = replace(resourceName, '-', '')
+var storageAccountName = 'st${resourceNameWithoutHyphens}${uniqueStorageSuffix}'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2025-01-01' = {
   name: storageAccountName
@@ -22,7 +25,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2025-01-01' = {
 }
 
 resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' = {
-  name: 'kv-${projectName}'
+  name: 'kv-${resourceName}'
   location: location
   properties: {
     enableSoftDelete: true

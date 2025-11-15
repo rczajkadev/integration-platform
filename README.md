@@ -66,3 +66,5 @@ Examples:
 - github actions - how it works and how to run them
 - kv secrets should be added manually
 - github actions to deploy shared resources should be run manually, other on changes in integrations folders or manually when after shared resources deployment
+- Update info about shared resource naming convention e.g. `kv-integrations-shared`
+- Update info about storage account naming convention - unique postfix
