@@ -36,5 +36,14 @@ resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' = {
       name: 'standard'
       family: 'A'
     }
+    accessPolicies: [
+      {
+        tenantId: subscription().tenantId
+        objectId: '51db1598-f913-46fa-970a-65ae40722481'
+        permissions: {
+          secrets: ['set', 'get', 'list']
+        }
+      }
+    ]
   }
 }
