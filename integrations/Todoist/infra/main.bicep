@@ -6,6 +6,7 @@ param sharedStorageAccountName string
 param sharedKeyVaultName string
 param todoistApiKeySecretName string
 param todoistApiBaseUrl string
+param subtaskLabelsCheckSchedule string
 param timeZone string
 param location string = resourceGroup().location
 
@@ -65,6 +66,10 @@ resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
         {
           name: 'TodoistApiKey'
           value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${todoistApiKeySecretName})'
+        }
+        {
+          name: 'SubtaskLabelsCheckSchedule'
+          value: subtaskLabelsCheckSchedule
         }
       ]
     }
