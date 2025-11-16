@@ -107,6 +107,8 @@ jobs:
             --output json)
 
           appName=$(echo $deploymentOutput | jq -r '.appName.value')
+
+          echo "appName=$appName"
           echo "appName=$appName" >> $GITHUB_OUTPUT
 
   deploy-functionapp:
