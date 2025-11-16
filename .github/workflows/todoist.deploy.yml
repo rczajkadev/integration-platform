@@ -17,13 +17,13 @@ on:
 
 env:
   INTEGRATION_DIRECTORY: ./integrations/Todoist
+  INFRA_DIRECTORY: ./integrations/Todoist/infra
+  FUNCTION_APP_DIRECTORY: ./integrations/Todoist/src
 
 jobs:
   build-infrastructure:
     name: Build Bicep Infrastructure
     runs-on: ubuntu-latest
-    env:
-      INFRA_DIRECTORY: ${{ env.INTEGRATION_DIRECTORY }}/infra
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -45,8 +45,6 @@ jobs:
   build-functionapp:
     name: Build Function App
     runs-on: ubuntu-latest
-    env:
-      FUNCTION_APP_DIRECTORY: ${{ env.INTEGRATION_DIRECTORY }}/src
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
