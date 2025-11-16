@@ -8,8 +8,8 @@ func getResourceName(resourceType string, name string) string =>
   '${resourceType}-${name}'
 
 @export()
-func getStorageAccountName(name string, accountNumber int) string =>
-  replace(getResourceNameWithHash('st${name}${padLeft(accountNumber, 2, '0')}', hashLength), '-', '')
+func getStorageAccountName(name string) string =>
+  replace(getResourceNameWithHash('st${name}', hashLength), '-', '')
 
 @export()
 func getUniqueResourceName(resourceType string, name string) string =>

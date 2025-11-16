@@ -10,7 +10,7 @@ param location string = resourceGroup().location
 var name = '${projectName}-${integrationName}'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2025-01-01' = {
-  name: getStorageAccountName(name, 1)
+  name: getStorageAccountName(name)
   location: location
   kind: 'StorageV2'
   sku: {
