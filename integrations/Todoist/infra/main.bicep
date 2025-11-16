@@ -48,8 +48,16 @@ resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
       }
       appSettings: [
         {
+          name: 'FUNCTIONS_EXTENSION_VERSION'
+          value: '~4'
+        }
+        {
           name: 'FUNCTIONS_WORKER_RUNTIME'
           value: 'dotnet-isolated'
+        }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE'
+          value: '1'
         }
         {
           name: 'WEBSITE_TIME_ZONE'
