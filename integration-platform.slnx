@@ -1,3 +1,8 @@
 ﻿<Solution>
-  <Project Path="integrations\Todoist\src\Todoist.csproj" />
+  <Folder Name="/integrations/">
+    <Project Path="integrations/Todoist/src/Todoist.csproj" />
+  </Folder>
+  <Folder Name="/libraries/">
+
+  </Folder>
 </Solution>
