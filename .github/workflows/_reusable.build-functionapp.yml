@@ -1,0 +1,48 @@
+name: Reusable - Build Function App
+
+on:
+  workflow_call:
+    inputs:
+      integration-directory:
+        required: true
+        type: string
+
+jobs:
+  build-functionapp:
+    name: Build Function App
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+
+      - name: Restore dependencies
+        working-directory: ${{ env.integration-directory }}
+        run: dotnet restore
+
+      - name: Build
+        working-directory: ${{ env.integration-directory }}
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        working-directory: ${{ env.integration-directory }}
+        run: dotnet test -c Release --no-build
+
+      - name: Publish
+        working-directory: ${{ env.integration-directory }}/src
+        run: dotnet publish -c Release --no-build -o ./publish
+
+      - name: Package function app
+        working-directory: ${{ env.integration-directory }}/src
+        run: |
+          cd publish
+          zip -r ../../../../functionapp.zip .
+
+      - name: Upload function app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: functionapp
+          path: functionapp.zip
+          if-no-files-found: error

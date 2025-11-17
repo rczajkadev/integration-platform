@@ -1,0 +1,19 @@
+name: Shared - Deploy Infrastructure
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-infrastructure:
+    name: Build Bicep Infrastructure
+    uses: ./.github/workflows/_reusable.build-infra.yml
+    with:
+      infra-directory: ./shared-infra
+
+  deploy-infrastructure:
+    name: Deploy Infrastructure
+    needs: [build-infrastructure]
+    uses: ./.github/workflows/_reusable.deploy-infra.yml
+    secrets:
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      azure-resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}

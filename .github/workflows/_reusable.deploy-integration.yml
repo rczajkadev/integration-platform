@@ -1,0 +1,48 @@
+name: Reusable - Build and Deploy Integration
+
+on:
+  workflow_call:
+    inputs:
+      infra-directory:
+        required: true
+        type: string
+      integration-directory:
+        required: true
+        type: string
+    secrets:
+      azure-credentials:
+        required: true
+      azure-resource-group:
+        required: true
+
+jobs:
+  build-infrastructure:
+    name: Build Bicep Infrastructure
+    uses: ./.github/workflows/_reusable.build-infra.yml
+    with:
+      infra-directory: ${{ inputs.infra-directory }}
+
+  build-functionapp:
+    name: Build Function App
+    uses: ./.github/workflows/_reusable.build-functionapp.yml
+    with:
+      integration-directory: ${{ inputs.integration-directory }}
+
+  deploy-infrastructure:
+    name: Deploy Infrastructure
+    needs: [build-infrastructure, build-functionapp]
+    uses: ./.github/workflows/_reusable.deploy-infra.yml
+    secrets:
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      azure-resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+
+  deploy-functionapp:
+    name: Deploy Function App
+    needs: [build-functionapp, deploy-infrastructure]
+    uses: ./.github/workflows/_reusable.deploy-functionapp.yml
+    with:
+      functionapp-name: ${{ needs.deploy-infrastructure.outputs.app-name }}
+    secrets:
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      azure-resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+
