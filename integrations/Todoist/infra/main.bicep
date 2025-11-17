@@ -2,6 +2,7 @@ import { getResourceName } from '../../../shared-infra/functions.bicep'
 
 param projectName string
 param integrationName string
+param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
 param todoistApiKeySecretName string
@@ -20,14 +21,8 @@ resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
   name: sharedKeyVaultName
 }
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
-  name: getResourceName('asp', name)
-  kind: 'functionapp'
-  location: location
-  sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
-  }
+resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' existing = {
+  name: sharedAppServicePlanName
 }
 
 resource functionApp 'Microsoft.Web/sites@2024-11-01' = {

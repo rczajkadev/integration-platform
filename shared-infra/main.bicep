@@ -1,4 +1,5 @@
 import {
+  getResourceName
   getStorageAccountName
   getUniqueResourceName
 } from 'functions.bicep'
@@ -45,5 +46,15 @@ resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' = {
         }
       }
     ]
+  }
+}
+
+resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' = {
+  name: getResourceName('asp', name)
+  kind: 'functionapp'
+  location: location
+  sku: {
+    name: 'Y1'
+    tier: 'Dynamic'
   }
 }
