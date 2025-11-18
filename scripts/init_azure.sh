@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 az login --use-device-code
 
 CREDENTIALS_FILE="azure-credentials.json"
