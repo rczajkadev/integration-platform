@@ -1,5 +1,6 @@
 ﻿<Solution>
   <Folder Name="/integrations/">
+    <Project Path="integrations/GoogleDrive/src/GoogleDrive.csproj" />
     <Project Path="integrations/Todoist/src/Todoist.csproj" />
   </Folder>
   <Folder Name="/libraries/">
