@@ -5,7 +5,6 @@ param integrationName string
 param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
-param keyValultSecretName string
 param subtaskLabelsCheckSchedule string
 param timeZone string
 param location string = resourceGroup().location
@@ -60,10 +59,6 @@ resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
-        }
-        {
-          name: 'KeyValultSecret'
-          value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${keyValultSecretName})'
         }
         {
           name: 'SubtaskLabelsCheckSchedule'
