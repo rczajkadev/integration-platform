@@ -7,7 +7,7 @@ namespace Integrations.Template.Functions;
 internal sealed class TimerTriggerFunction(ILogger<TimerTriggerFunction> logger)
 {
     [Function(nameof(TimerTriggerFunction))]
-    public void Run([TimerTrigger("%TimerTriggerSchedule%", UseMonitor = false)] TimerInfo timer)
+    public void Run([TimerTrigger("%CronSchedule%", UseMonitor = false)] TimerInfo timer)
     {
         logger.LogInformation("C# Timer trigger function executed at: {DateTime}", DateTime.Now);
 

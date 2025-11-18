@@ -1,89 +1,27 @@
-import { getResourceName } from '../../../shared-infra/functions.bicep'
-
 param projectName string
 param integrationName string
 param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
-param subtaskLabelsCheckSchedule string
+param cronSchedule string
 param timeZone string
-param location string = resourceGroup().location
 
-var name = '${projectName}-${integrationName}'
-
-resource storageAccount 'Microsoft.Storage/storageAccounts@2025-01-01' existing = {
-  name: sharedStorageAccountName
-}
-
-resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
-  name: sharedKeyVaultName
-}
-
-resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' existing = {
-  name: sharedAppServicePlanName
-}
-
-resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
-  name: getResourceName('func', name)
-  kind: 'functionapp'
-  location: location
-  identity: {
-    type: 'SystemAssigned'
-  }
-  properties: {
-    serverFarmId: appServicePlan.id
-    siteConfig: {
-      cors: {
-        allowedOrigins: [
-          'https://portal.azure.com'
-        ]
-        supportCredentials: true
-      }
-      appSettings: [
-        {
-          name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~4'
-        }
-        {
-          name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet-isolated'
-        }
-        {
-          name: 'WEBSITE_RUN_FROM_PACKAGE'
-          value: '1'
-        }
-        {
-          name: 'WEBSITE_TIME_ZONE'
-          value: timeZone
-        }
-        {
-          name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
-        }
-        {
-          name: 'SubtaskLabelsCheckSchedule'
-          value: subtaskLabelsCheckSchedule
-        }
-      ]
-    }
-    httpsOnly: true
-  }
-}
-
-resource keyVaultAccessPolicies 'Microsoft.KeyVault/vaults/accessPolicies@2024-11-01' = {
-  name: 'add'
-  parent: keyVault
-  properties: {
-    accessPolicies: [
+module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
+  name: 'functionAppDeploy'
+  params: {
+    projectName: projectName
+    integrationName: integrationName
+    customAppSettings: [
       {
-        tenantId: subscription().tenantId
-        objectId: functionApp.identity.principalId
-        permissions: {
-          secrets: ['get']
-        }
+        name: 'CronSchedule'
+        value: cronSchedule
       }
     ]
+    sharedAppServicePlanName: sharedAppServicePlanName
+    sharedStorageAccountName: sharedStorageAccountName
+    sharedKeyVaultName: sharedKeyVaultName
+    timeZone: timeZone
   }
 }
 
-output appName string = functionApp.name
+output appName string = functionApp.outputs.appName

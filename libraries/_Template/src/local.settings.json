@@ -4,6 +4,6 @@
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "WEBSITE_TIME_ZONE": "Central European Standard Time",
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "TimerTriggerSchedule": "0 */5 * * * *"
+    "CronSchedule": "0 */5 * * * *"
   }
 }
