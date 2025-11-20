@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Integrations.GoogleDrive": {
+    "GoogleDrive": {
       "commandName": "Project",
       "commandLineArgs": "--port 7233",
       "launchBrowser": false

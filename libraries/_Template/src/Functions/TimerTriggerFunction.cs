@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
@@ -7,13 +9,25 @@ namespace Integrations.Template.Functions;
 internal sealed class TimerTriggerFunction(ILogger<TimerTriggerFunction> logger)
 {
     [Function(nameof(TimerTriggerFunction))]
-    public void Run([TimerTrigger("%CronSchedule%", UseMonitor = false)] TimerInfo timer)
+    public async Task RunAsync(
+        [TimerTrigger("%CronSchedule%", UseMonitor = false)] TimerInfo _,
+        CancellationToken cancellationToken)
     {
-        logger.LogInformation("C# Timer trigger function executed at: {DateTime}", DateTime.Now);
+        logger.LogInformation("Timer trigger function executed at: {DateTime}", DateTime.Now);
 
-        if (timer.ScheduleStatus is not null)
+        try
         {
-            logger.LogInformation("Next timer schedule at: {ScheduleStatusNext}", timer.ScheduleStatus.Next);
+            await HandleFunctionAsync(cancellationToken);
         }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error while executing function.");
+            throw;
+        }
+    }
+
+    private async Task HandleFunctionAsync(CancellationToken cancellationToken)
+    {
+        await Task.CompletedTask;
     }
 }

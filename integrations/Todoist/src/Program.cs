@@ -1,12 +1,11 @@
 using System.Net.Http.Headers;
 using Integrations.Todoist.TodoistClient;
-using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Refit;
 
-FunctionsApplicationBuilder builder = FunctionsApplication.CreateBuilder(args);
+var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
@@ -28,9 +27,5 @@ builder.Services
         client.BaseAddress = new Uri(baseUrl);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
     });
-
-builder.Services
-    .AddApplicationInsightsTelemetryWorkerService()
-    .ConfigureFunctionsApplicationInsights();
 
 builder.Build().Run();

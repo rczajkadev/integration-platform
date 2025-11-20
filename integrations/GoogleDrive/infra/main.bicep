@@ -3,8 +3,13 @@ param integrationName string
 param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
-param cronSchedule string
+param googleDriveJsonCredentialsSecretName string
+param accountingDocumentationBackupCronSchedule string
 param timeZone string
+
+resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
+  name: sharedKeyVaultName
+}
 
 module storageAccount '../../../shared-infra/modules/storageAccount.bicep' = {
   name: 'storageAccountDeploy'
@@ -21,12 +26,16 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
     integrationName: integrationName
     customAppSettings: [
       {
-        name: 'CronSchedule'
-        value: cronSchedule
-      }
-      {
         name: 'StorageAccountConnectionString'
         value: storageAccount.outputs.connectionString
+      }
+      {
+        name: 'GoogleDriveJsonCredentials'
+        value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${googleDriveJsonCredentialsSecretName})'
+      }
+      {
+        name: 'AccountingDocumentationBackupCronSchedule'
+        value: accountingDocumentationBackupCronSchedule
       }
     ]
     sharedAppServicePlanName: sharedAppServicePlanName

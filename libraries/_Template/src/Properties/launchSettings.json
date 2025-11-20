@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Integrations.Template": {
+    "Template": {
       "commandName": "Project",
       "commandLineArgs": "--port 7233",
       "launchBrowser": false
