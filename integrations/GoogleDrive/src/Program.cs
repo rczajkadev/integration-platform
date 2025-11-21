@@ -1,6 +1,3 @@
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Drive.v3;
-using Google.Apis.Services;
 using Integrations.GoogleDrive;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Azure;
@@ -16,25 +13,8 @@ builder.Services.AddAzureClients(b =>
     b.AddBlobServiceClient(builder.Configuration["StorageAccountConnectionString"]);
 });
 
-using var driveService = CreateDriveService();
+using var exportService = DriveExportService.Create(builder.Configuration["GoogleDriveJsonCredentials"]!);
 
-builder.Services.AddSingleton(new DriveExportService(driveService));
+builder.Services.AddSingleton(exportService);
 
 builder.Build().Run();
-
-return;
-
-DriveService CreateDriveService()
-{
-    var json = builder.Configuration["GoogleDriveJsonCredentials"];
-
-    var credential = CredentialFactory.FromJson<ServiceAccountCredential>(json)
-        .ToGoogleCredential()
-        .CreateScoped(DriveService.Scope.Drive);
-
-    return new DriveService(new BaseClientService.Initializer
-    {
-        HttpClientInitializer = credential,
-        ApplicationName = "Integration Platform"
-    });
-}

@@ -1,93 +1,123 @@
-﻿using System.IO;
-using System.IO.Compression;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
-using Google.Apis.Drive.v3.Data;
-using File = Google.Apis.Drive.v3.Data.File;
+using Google.Apis.Services;
 
 namespace Integrations.GoogleDrive;
 
-internal sealed class DriveExportService(DriveService driveService)
+internal sealed class DriveExportService : IDisposable
 {
-    public async Task<MemoryStream> ExportDirectoryAsZipAsync(string folderId, CancellationToken cancellationToken)
+    private readonly DriveService _driveService;
+    private readonly SemaphoreSlim _semaphore;
+
+    private DriveExportService(DriveService driveService, int concurrentApiCalls)
     {
-        var stream = new MemoryStream();
-
-        using (var zip = new ZipArchive(stream, ZipArchiveMode.Create, true))
-        {
-            await AddFolderToZipAsync(folderId, zip, "", cancellationToken);
-        }
-
-        stream.Position = 0;
-        return stream;
+        _driveService = driveService;
+        _semaphore = new SemaphoreSlim(concurrentApiCalls);
     }
 
-    private async Task AddFolderToZipAsync(
+    public static DriveExportService Create(string jsonCredentials, int concurrentApiCalls = 100)
+    {
+        if (string.IsNullOrWhiteSpace(jsonCredentials))
+            throw new ArgumentNullException(nameof(jsonCredentials));
+
+        var credential = CredentialFactory.FromJson<ServiceAccountCredential>(jsonCredentials)
+            .ToGoogleCredential()
+            .CreateScoped(DriveService.Scope.Drive);
+
+        var drive = new DriveService(new BaseClientService.Initializer
+        {
+            HttpClientInitializer = credential,
+            ApplicationName = "Integration Platform"
+        });
+
+        return new DriveExportService(drive, concurrentApiCalls);
+    }
+
+    public void Dispose()
+    {
+        _semaphore.Dispose();
+        _driveService.Dispose();
+    }
+
+    public async Task<IEnumerable<FileInfo>> ListFilesInFolderAsync(
         string folderId,
-        ZipArchive zip,
+        CancellationToken cancellationToken)
+    {
+        return await ListFilesInFolderAsync(folderId, "", cancellationToken);
+    }
+
+    public async Task<IEnumerable<File>> DownloadFilesAsync(
+        IEnumerable<FileInfo> files,
+        CancellationToken cancellationToken)
+    {
+        var tasks = files.Select(async file =>
+        {
+            await _semaphore.WaitAsync(cancellationToken);
+
+            try
+            {
+                await using var stream = new MemoryStream();
+                var getRequest = _driveService.Files.Get(file.Id);
+                await getRequest.DownloadAsync(stream, cancellationToken);
+                var bytes = stream.ToArray();
+                return new File(file.Path, bytes);
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+        }).ToArray();
+
+        await Task.WhenAll(tasks);
+        return tasks.Select(t => t.Result);
+    }
+
+    private async Task<IEnumerable<FileInfo>> ListFilesInFolderAsync(
+        string folderId,
         string pathPrefix,
         CancellationToken cancellationToken)
     {
         string? nextPageToken = null;
+        var files = new List<FileInfo>();
 
         do
         {
-            var result = await ListFilesInFolderAsync(folderId, nextPageToken, cancellationToken);
+            var request = _driveService.Files.List();
+
+            request.Q = $"'{folderId}' in parents and trashed = false";
+            request.Spaces = "drive";
+            request.Fields = "nextPageToken, files(id, name, mimeType)";
+            request.PageToken = nextPageToken;
+
+            var result = await request.ExecuteAsync(cancellationToken);
 
             foreach (var file in result.Files)
             {
-                await HandleFileAsync(file, zip, pathPrefix, cancellationToken);
+                var fileId = file.Id;
+                var filePath = pathPrefix + file.Name;
+                var isFolderType = file.MimeType == "application/vnd.google-apps.folder";
+
+                if (isFolderType)
+                {
+                    files.AddRange(await ListFilesInFolderAsync(file.Id, $"{filePath}/", cancellationToken));
+                    continue;
+                }
+
+                files.Add(new FileInfo(fileId, filePath));
             }
 
             nextPageToken = result.NextPageToken;
         }
         while (!string.IsNullOrWhiteSpace(nextPageToken));
-    }
 
-    private async Task HandleFileAsync(
-        File file,
-        ZipArchive zip,
-        string pathPrefix,
-        CancellationToken cancellationToken)
-    {
-        var fileId = file.Id;
-        var entryName = pathPrefix + file.Name;
-        var isFolderType = file.MimeType == "application/vnd.google-apps.folder";
-
-        if (isFolderType)
-        {
-            await AddFolderToZipAsync(fileId, zip, $"{entryName}/", cancellationToken);
-            return;
-        }
-
-        await AddEntryToZipAsync(zip, entryName, fileId, cancellationToken);
-    }
-
-    private async Task AddEntryToZipAsync(
-        ZipArchive zip,
-        string entryName,
-        string fileId,
-        CancellationToken cancellationToken)
-    {
-        var entry = zip.CreateEntry(entryName, CompressionLevel.SmallestSize);
-        await using var entryStream = entry.Open();
-        var getRequest = driveService.Files.Get(fileId);
-        await getRequest.DownloadAsync(entryStream, cancellationToken);
-    }
-
-    private async Task<FileList> ListFilesInFolderAsync(
-        string folderId,
-        string? nextPageToken,
-        CancellationToken cancellationToken)
-    {
-        var request = driveService.Files.List();
-
-        request.Q = $"'{folderId}' in parents and trashed = false";
-        request.Spaces = "drive";
-        request.Fields = "nextPageToken, files(id, name, mimeType)";
-        request.PageToken = nextPageToken;
-
-        return await request.ExecuteAsync(cancellationToken);
+        return files;
     }
 }
+
+internal sealed record FileInfo(string Id, string Path);

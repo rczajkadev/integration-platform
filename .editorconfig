@@ -17,9 +17,11 @@ dotnet_diagnostic.CA1848.severity = none
 dotnet_diagnostic.CA2007.severity = none
 
 dotnet_diagnostic.IDE0005.severity = none
+dotnet_diagnostic.IDE0022.severity = none
 dotnet_diagnostic.IDE0055.severity = warning
 dotnet_diagnostic.IDE0058.severity = none
 
+csharp_prefer_braces = when_multiline:warning
 csharp_style_namespace_declarations = file_scoped:warning
 csharp_style_var_for_built_in_types	= true:warning
 csharp_style_var_when_type_is_apparent = true:warning
