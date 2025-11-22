@@ -16,7 +16,13 @@ internal sealed class BackupAccountingDocumentation(
 
     [Function(nameof(BackupAccountingDocumentation))]
     public async Task RunAsync(
-        [TimerTrigger("%AccountingDocumentationBackupCronSchedule%", UseMonitor = false)] TimerInfo _,
+        [TimerTrigger(
+            "%AccountingDocumentationBackupCronSchedule%",
+            UseMonitor = false
+#if DEBUG
+            , RunOnStartup = true
+#endif
+            )] TimerInfo _,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Timer trigger function executed at: {DateTime}", DateTime.Now);
