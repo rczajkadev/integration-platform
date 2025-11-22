@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
 
       - name: Restore dependencies
         working-directory: ${{ inputs.integration-directory }}
@@ -41,7 +41,7 @@ jobs:
           zip -r ../../../../functionapp.zip .
 
       - name: Upload function app artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: functionapp
           path: functionapp.zip

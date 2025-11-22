@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Validate bicep
         working-directory: ${{ inputs.infra-directory }}
@@ -23,7 +23,7 @@ jobs:
           az bicep build-params -f main.bicepparam --outfile parameters.json
 
       - name: Upload infrastructure artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: infra
           path: ${{ inputs.infra-directory }}/*.json
