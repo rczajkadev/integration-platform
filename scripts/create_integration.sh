@@ -16,4 +16,4 @@ dotnet new integration -n $name -o ./integrations/$name
 dotnet sln add ./integrations/$name/**/*.csproj -s integrations
 
 mv ./integrations/$name/.github/workflows/* ./.github/workflows
-rm -r ./integrations/$name/.github
+rm -rf ./integrations/$name/.github

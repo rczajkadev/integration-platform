@@ -10,13 +10,13 @@ internal sealed class DriveExportService : IDisposable
     private readonly DriveService _driveService;
     private readonly SemaphoreSlim _semaphore;
 
-    private DriveExportService(DriveService driveService, int concurrentApiCalls)
+    private DriveExportService(DriveService driveService, int concurrentDownloads)
     {
         _driveService = driveService;
-        _semaphore = new SemaphoreSlim(concurrentApiCalls);
+        _semaphore = new SemaphoreSlim(concurrentDownloads);
     }
 
-    public static DriveExportService Create(string jsonCredentials, int concurrentApiCalls = 100)
+    public static DriveExportService Create(string applicationName, string jsonCredentials, int concurrentDownloads)
     {
         if (string.IsNullOrWhiteSpace(jsonCredentials))
             throw new ArgumentNullException(nameof(jsonCredentials));
@@ -28,10 +28,10 @@ internal sealed class DriveExportService : IDisposable
         var drive = new DriveService(new BaseClientService.Initializer
         {
             HttpClientInitializer = credential,
-            ApplicationName = "Integration Platform"
+            ApplicationName = applicationName
         });
 
-        return new DriveExportService(drive, concurrentApiCalls);
+        return new DriveExportService(drive, concurrentDownloads);
     }
 
     public void Dispose()

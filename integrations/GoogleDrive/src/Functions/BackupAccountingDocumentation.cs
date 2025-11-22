@@ -3,17 +3,16 @@ using System.IO.Compression;
 using Azure.Storage.Blobs;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Integrations.GoogleDrive.Functions;
 
 internal sealed class BackupAccountingDocumentation(
     DriveExportService exportService,
     BlobServiceClient blobServiceClient,
+    IOptions<AccountingDocumentationOptions> options,
     ILogger<BackupAccountingDocumentation> logger)
 {
-    private const string ContainerName = "accounting-documentation-backups";
-    private const string FileNamePrefix = "accounting-documentation-";
-
     [Function(nameof(BackupAccountingDocumentation))]
     public async Task RunAsync(
         [TimerTrigger(
@@ -42,8 +41,7 @@ internal sealed class BackupAccountingDocumentation(
     {
         logger.LogInformation("Listing files in the specified folder...");
 
-        const string folderId = "1k6XMCP0xjcy67bgEV6zAdxEUrdjm68Hv";
-        var filesInfo = await exportService.ListFilesInFolderAsync(folderId, cancellationToken);
+        var filesInfo = await exportService.ListFilesInFolderAsync(options.Value.DriveFolderId, cancellationToken);
 
         logger.LogInformation("Downloading files...");
 
@@ -54,11 +52,11 @@ internal sealed class BackupAccountingDocumentation(
         var zipData = await files.ZipAsync(CompressionLevel.SmallestSize, cancellationToken);
 
         var dateTimeString = DateTime.UtcNow.ToString("yyyyMMddHHmmssff", CultureInfo.InvariantCulture);
-        var filename = $"{FileNamePrefix}{dateTimeString}.zip";
+        var filename = $"{options.Value.BackupsFileNamePrefix}{dateTimeString}.zip";
 
         logger.LogInformation("Backup zip file created: {Filename}. Uploading to storage...", filename);
 
-        var containerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
+        var containerClient = blobServiceClient.GetBlobContainerClient(options.Value.BackupsContainerName);
         await containerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
         var blobClient = containerClient.GetBlobClient(filename);
         var binaryData = BinaryData.FromBytes(zipData);

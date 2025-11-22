@@ -4,6 +4,11 @@ param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
 param googleDriveJsonCredentialsSecretName string
+param googleApplicationName string
+param concurrentDownloads int
+param accountingDocumentationDriveFolderId string
+param accountingDocumentationBackupsContainerName string
+param accountingDocumentationBackupsFileNamePrefix string
 param accountingDocumentationBackupCronSchedule string
 param timeZone string
 
@@ -36,6 +41,26 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
       {
         name: 'AccountingDocumentationBackupCronSchedule'
         value: accountingDocumentationBackupCronSchedule
+      }
+      {
+        name: 'GoogleApplicationName'
+        value: googleApplicationName
+      }
+      {
+        name: 'ConcurrentDownloads'
+        value: concurrentDownloads
+      }
+      {
+        name: 'AccountingDocumentation__DriveFolderId'
+        value: accountingDocumentationDriveFolderId
+      }
+      {
+        name: 'AccountingDocumentation__BackupsContainerName'
+        value: accountingDocumentationBackupsContainerName
+      }
+      {
+        name: 'AccountingDocumentation__BackupsFileNamePrefix'
+        value: accountingDocumentationBackupsFileNamePrefix
       }
     ]
     sharedAppServicePlanName: sharedAppServicePlanName
