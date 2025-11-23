@@ -4,14 +4,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Integrations.GoogleDrive.Functions;
 
-internal sealed class BackupAccountingDocumentation(
+internal sealed class BackupHenrySaves(
     BackupHandler handler,
-    ILogger<BackupAccountingDocumentation> logger)
+    ILogger<BackupHenrySaves> logger)
 {
-    [Function(nameof(BackupAccountingDocumentation))]
+    [Function(nameof(BackupHenrySaves))]
     public async Task RunAsync(
         [TimerTrigger(
-            "%AccountingDocumentationBackupCronSchedule%",
+            "%HenrySavesBackupCronSchedule%",
             UseMonitor = false
 #if DEBUG
             , RunOnStartup = true
@@ -23,7 +23,7 @@ internal sealed class BackupAccountingDocumentation(
 
         try
         {
-            await handler.HandleAsync(BackupType.AccountingDocumentation, cancellationToken);
+            await handler.HandleAsync(BackupType.HenrySaves, cancellationToken);
         }
         catch (Exception ex)
         {

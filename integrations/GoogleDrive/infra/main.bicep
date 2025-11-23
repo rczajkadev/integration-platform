@@ -3,13 +3,18 @@ param integrationName string
 param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
-param googleDriveJsonCredentialsSecretName string
+param driveWorkJsonCredentialsSecretName string
+param drivePersonalJsonCredentialsSecretName string
 param googleApplicationName string
 param concurrentDownloads int
+param accountingDocumentationBackupCronSchedule string
 param accountingDocumentationDriveFolderId string
 param accountingDocumentationBackupContainerName string
 param accountingDocumentationBackupFileNamePrefix string
-param accountingDocumentationBackupCronSchedule string
+param henrySavesBackupCronSchedule string
+param henrySavesDriveFolderId string
+param henrySavesBackupContainerName string
+param henrySavesBackupFileNamePrefix string
 param timeZone string
 
 resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
@@ -35,32 +40,84 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
         value: storageAccount.outputs.connectionString
       }
       {
-        name: 'GoogleDriveJsonCredentials'
-        value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${googleDriveJsonCredentialsSecretName})'
-      }
-      {
         name: 'AccountingDocumentationBackupCronSchedule'
         value: accountingDocumentationBackupCronSchedule
       }
       {
-        name: 'GoogleApplicationName'
+        name: 'HenrySavesBackupCronSchedule'
+        value: henrySavesBackupCronSchedule
+      }
+      {
+        name: 'GoogleDrive__0__AccountType'
+        value: 'Work'
+      }
+      {
+        name: 'GoogleDrive__0__ApplicationName'
         value: googleApplicationName
       }
       {
-        name: 'ConcurrentDownloads'
+        name: 'GoogleDrive__0__JsonCredentials'
+        value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${driveWorkJsonCredentialsSecretName})'
+      }
+      {
+        name: 'GoogleDrive__0__ConcurrentDownloads'
         value: concurrentDownloads
       }
       {
-        name: 'AccountingDocumentation__DriveFolderId'
+        name: 'GoogleDrive__1__AccountType'
+        value: 'Personal'
+      }
+      {
+        name: 'GoogleDrive__1__ApplicationName'
+        value: googleApplicationName
+      }
+      {
+        name: 'GoogleDrive__1__JsonCredentials'
+        value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${drivePersonalJsonCredentialsSecretName})'
+      }
+      {
+        name: 'GoogleDrive__1__ConcurrentDownloads'
+        value: concurrentDownloads
+      }
+      {
+        name: 'Backup__0__BackupType'
+        value: 'AccountingDocumentation'
+      }
+      {
+        name: 'Backup__0__AccountType'
+        value: 'Work'
+      }
+      {
+        name: 'Backup__0__DriveFolderId'
         value: accountingDocumentationDriveFolderId
       }
       {
-        name: 'AccountingDocumentation__BackupContainerName'
+        name: 'Backup__0__ContainerName'
         value: accountingDocumentationBackupContainerName
       }
       {
-        name: 'AccountingDocumentation__BackupFileNamePrefix'
+        name: 'Backup__0__FileNamePrefix'
         value: accountingDocumentationBackupFileNamePrefix
+      }
+      {
+        name: 'Backup__1__BackupType'
+        value: 'HenrySaves'
+      }
+      {
+        name: 'Backup__1__AccountType'
+        value: 'Personal'
+      }
+      {
+        name: 'Backup__1__DriveFolderId'
+        value: henrySavesDriveFolderId
+      }
+      {
+        name: 'Backup__1__ContainerName'
+        value: henrySavesBackupContainerName
+      }
+      {
+        name: 'Backup__1__FileNamePrefix'
+        value: henrySavesBackupFileNamePrefix
       }
     ]
     sharedAppServicePlanName: sharedAppServicePlanName

@@ -2,36 +2,34 @@
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
+using Integrations.GoogleDrive.Options;
 
-namespace Integrations.GoogleDrive;
+namespace Integrations.GoogleDrive.Drive;
 
-internal sealed class DriveExportService : IDisposable
+internal sealed class DriveClient : IDisposable
 {
     private readonly DriveService _driveService;
     private readonly SemaphoreSlim _semaphore;
 
-    private DriveExportService(DriveService driveService, int concurrentDownloads)
+    private DriveClient(DriveService driveService, int concurrentDownloads)
     {
         _driveService = driveService;
         _semaphore = new SemaphoreSlim(concurrentDownloads);
     }
 
-    public static DriveExportService Create(string applicationName, string jsonCredentials, int concurrentDownloads)
+    public static DriveClient Create(GoogleDriveOptions options)
     {
-        if (string.IsNullOrWhiteSpace(jsonCredentials))
-            throw new ArgumentNullException(nameof(jsonCredentials));
-
-        var credential = CredentialFactory.FromJson<ServiceAccountCredential>(jsonCredentials)
+        var credential = CredentialFactory.FromJson<ServiceAccountCredential>(options.JsonCredentials)
             .ToGoogleCredential()
             .CreateScoped(DriveService.Scope.Drive);
 
         var drive = new DriveService(new BaseClientService.Initializer
         {
             HttpClientInitializer = credential,
-            ApplicationName = applicationName
+            ApplicationName = options.ApplicationName
         });
 
-        return new DriveExportService(drive, concurrentDownloads);
+        return new DriveClient(drive, options.ConcurrentDownloads);
     }
 
     public void Dispose()
@@ -114,5 +112,3 @@ internal sealed class DriveExportService : IDisposable
         return files;
     }
 }
-
-internal sealed record FileInfo(string Id, string Path);
