@@ -1,5 +1,9 @@
 ﻿using System.IO;
+using System.Runtime.Serialization;
+using System.Text.Json;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
 using Integrations.GoogleDrive.Options;
@@ -17,11 +21,31 @@ internal sealed class DriveClient : IDisposable
         _semaphore = new SemaphoreSlim(concurrentDownloads);
     }
 
-    public static DriveClient Create(GoogleDriveOptions options)
+    public static async Task<DriveClient> CreateAsync(GoogleDriveOptions options, CancellationToken cancellationToken)
     {
-        var credential = CredentialFactory.FromJson<ServiceAccountCredential>(options.JsonCredentials)
-            .ToGoogleCredential()
-            .CreateScoped(DriveService.Scope.DriveReadonly);
+        var (clientId, clientSecret, refreshToken) =
+            JsonSerializer.Deserialize<DriveCredentials>(options.JsonCredentials)
+            ?? throw new SerializationException("Could not deserialize google credentials");
+
+        var secrets = new ClientSecrets
+        {
+            ClientId = clientId,
+            ClientSecret = clientSecret,
+        };
+
+        var token = new TokenResponse
+        {
+            RefreshToken = refreshToken,
+        };
+
+        using var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+        {
+            ClientSecrets = secrets,
+            Scopes = [DriveService.Scope.Drive]
+        });
+
+        var credential = new UserCredential(flow, "user", token);
+        await credential.RefreshTokenAsync(cancellationToken);
 
         var drive = new DriveService(new BaseClientService.Initializer
         {
@@ -112,3 +136,5 @@ internal sealed class DriveClient : IDisposable
         return files;
     }
 }
+
+internal sealed record DriveCredentials(string ClientId, string ClientSecret, string RefreshToken);

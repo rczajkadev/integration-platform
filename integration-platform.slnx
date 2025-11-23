@@ -2,8 +2,9 @@
   <Folder Name="/integrations/">
     <Project Path="integrations/GoogleDrive/src/GoogleDrive.csproj" />
     <Project Path="integrations/Todoist/src/Todoist.csproj" />
+    <!-- <Project Path="integrations/_GoogleTokenRetriever/_GoogleTokenRetriever.csproj" /> -->
   </Folder>
   <Folder Name="/libraries/">
-
+    <!-- <Project Path="libraries/_Template/src/Template.csproj" /> -->
   </Folder>
 </Solution>

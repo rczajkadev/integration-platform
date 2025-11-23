@@ -13,7 +13,7 @@ internal sealed class BackupHandler(
     public async Task HandleAsync(BackupType backupType, CancellationToken cancellationToken)
     {
         var (backupOptions, driveOptions) = optionsResolver.Resolve(backupType);
-        using var client = DriveClient.Create(driveOptions);
+        using var client = await DriveClient.CreateAsync(driveOptions, cancellationToken);
 
         logger.LogInformation("Listing files in folder...");
 
