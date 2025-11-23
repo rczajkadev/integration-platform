@@ -8,25 +8,17 @@ param drivePersonalJsonCredentialsSecretName string
 param googleApplicationName string
 param concurrentDownloads int
 param accountingDocumentationBackupCronSchedule string
-param accountingDocumentationDriveFolderId string
-param accountingDocumentationBackupContainerName string
+param accountingDocumentationExportFolderId string
+param accountingDocumentationBackupFolderId string
 param accountingDocumentationBackupFileNamePrefix string
 param henrySavesBackupCronSchedule string
-param henrySavesDriveFolderId string
-param henrySavesBackupContainerName string
+param henrySavesExportFolderId string
+param henrySavesBackupFolderId string
 param henrySavesBackupFileNamePrefix string
 param timeZone string
 
 resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
   name: sharedKeyVaultName
-}
-
-module storageAccount '../../../shared-infra/modules/storageAccount.bicep' = {
-  name: 'storageAccountDeploy'
-  params: {
-    projectName: projectName
-    integrationName: integrationName
-  }
 }
 
 module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
@@ -35,10 +27,6 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
     projectName: projectName
     integrationName: integrationName
     customAppSettings: [
-      {
-        name: 'StorageAccountConnectionString'
-        value: storageAccount.outputs.connectionString
-      }
       {
         name: 'AccountingDocumentationBackupCronSchedule'
         value: accountingDocumentationBackupCronSchedule
@@ -88,12 +76,12 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
         value: 'Work'
       }
       {
-        name: 'Backup__0__DriveFolderId'
-        value: accountingDocumentationDriveFolderId
+        name: 'Backup__0__ExportFolderId'
+        value: accountingDocumentationExportFolderId
       }
       {
-        name: 'Backup__0__ContainerName'
-        value: accountingDocumentationBackupContainerName
+        name: 'Backup__0__BackupFolderId'
+        value: accountingDocumentationBackupFolderId
       }
       {
         name: 'Backup__0__FileNamePrefix'
@@ -108,12 +96,12 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
         value: 'Personal'
       }
       {
-        name: 'Backup__1__DriveFolderId'
-        value: henrySavesDriveFolderId
+        name: 'Backup__1__ExportFolderId'
+        value: henrySavesExportFolderId
       }
       {
-        name: 'Backup__1__ContainerName'
-        value: henrySavesBackupContainerName
+        name: 'Backup__1__BackupFolderId'
+        value: henrySavesBackupFolderId
       }
       {
         name: 'Backup__1__FileNamePrefix'

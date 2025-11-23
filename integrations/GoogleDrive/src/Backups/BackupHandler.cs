@@ -5,10 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Integrations.GoogleDrive.Backups;
 
-internal sealed class BackupHandler(
-    BackupBlobRepository blobRepository,
-    BackupOptionsResolver optionsResolver,
-    ILogger<BackupHandler> logger)
+internal sealed class BackupHandler(BackupOptionsResolver optionsResolver, ILogger<BackupHandler> logger)
 {
     public async Task HandleAsync(BackupType backupType, CancellationToken cancellationToken)
     {
@@ -17,7 +14,7 @@ internal sealed class BackupHandler(
 
         logger.LogInformation("Listing files in folder...");
 
-        var filesInfo = await client.ListFilesInFolderAsync(backupOptions.DriveFolderId, cancellationToken);
+        var filesInfo = await client.ListFilesInFolderAsync(backupOptions.ExportFolderId, cancellationToken);
 
         logger.LogInformation("Downloading files...");
 
@@ -32,8 +29,8 @@ internal sealed class BackupHandler(
 
         logger.LogInformation("Backup zip file created: {Filename}. Uploading to storage...", filename);
 
-        var containerName = backupOptions.ContainerName;
-        await blobRepository.UploadAsync(containerName, filename, zipData, cancellationToken);
+        const string contentType = "application/zip";
+        await client.UploadFileAsync(filename, backupOptions.BackupFolderId, zipData, contentType, cancellationToken);
 
         logger.LogInformation("Backup zip file '{Filename}' uploaded to storage.", filename);
     }

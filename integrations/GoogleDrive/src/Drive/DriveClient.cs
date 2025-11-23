@@ -95,6 +95,25 @@ internal sealed class DriveClient : IDisposable
         return tasks.Select(t => t.Result);
     }
 
+    public async Task UploadFileAsync(
+        string fileName,
+        string destinationFolderId,
+        byte[] content,
+        string contentType,
+        CancellationToken cancellationToken)
+    {
+        var metadata = new Google.Apis.Drive.v3.Data.File
+        {
+            Name = fileName,
+            Parents = [destinationFolderId]
+        };
+
+        using var stream = new MemoryStream(content);
+
+        var request = _driveService.Files.Create(metadata, stream, contentType);
+        await request.UploadAsync(cancellationToken);
+    }
+
     private async Task<IEnumerable<FileInfo>> ListFilesInFolderAsync(
         string folderId,
         string pathPrefix,

@@ -13,13 +13,6 @@ builder.Services.Configure<List<BackupOptions>>(builder.Configuration.GetSection
 builder.Services.Configure<List<GoogleDriveOptions>>(builder.Configuration.GetSection(GoogleDriveOptions.SectionName));
 
 builder.Services.AddScoped<BackupOptionsResolver>();
-
-builder.Services.AddAzureClients(b =>
-{
-    b.AddBlobServiceClient(builder.Configuration["StorageAccountConnectionString"]);
-});
-
-builder.Services.AddScoped<BackupBlobRepository>();
 builder.Services.AddScoped<BackupHandler>();
 
 builder.Build().Run();

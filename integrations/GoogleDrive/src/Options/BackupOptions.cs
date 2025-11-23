@@ -11,9 +11,9 @@ internal sealed class BackupOptions
 
     public AccountType AccountType { get; init; }
 
-    public string DriveFolderId { get; init; } = null!;
+    public string ExportFolderId { get; init; } = null!;
 
-    public string ContainerName { get; init; } = null!;
+    public string BackupFolderId { get; init; } = null!;
 
     public string FileNamePrefix { get; init; } = null!;
 }
