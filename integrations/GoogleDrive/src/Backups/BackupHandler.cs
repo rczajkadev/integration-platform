@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.IO.Compression;
 using Integrations.GoogleDrive.Drive;
 using Microsoft.Extensions.Logging;

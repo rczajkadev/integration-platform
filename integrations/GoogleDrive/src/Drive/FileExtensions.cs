@@ -11,12 +11,12 @@ internal static class FileExtensions
     {
         using var stream = new MemoryStream();
 
-        using (var zip = new ZipArchive(stream, ZipArchiveMode.Create, true))
+        await using (var zip = new ZipArchive(stream, ZipArchiveMode.Create, true))
         {
             foreach (var file in files)
             {
                 var entry = zip.CreateEntry(file.Path, compressionLevel);
-                await using var entryStream = entry.Open();
+                await using var entryStream = await entry.OpenAsync(cancellationToken);
                 await entryStream.WriteAsync(file.Content.AsMemory(0, file.Content.Length), cancellationToken);
             }
         }
