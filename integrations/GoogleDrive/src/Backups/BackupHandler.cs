@@ -1,16 +1,20 @@
 using System.Globalization;
 using System.IO.Compression;
+using Azure.Security.KeyVault.Secrets;
 using Integrations.GoogleDrive.Drive;
 using Microsoft.Extensions.Logging;
 
 namespace Integrations.GoogleDrive.Backups;
 
-internal sealed class BackupHandler(BackupOptionsResolver optionsResolver, ILogger<BackupHandler> logger)
+internal sealed class BackupHandler(
+    BackupOptionsResolver optionsResolver,
+    SecretClient secretClient,
+    ILogger<BackupHandler> logger)
 {
     public async Task HandleAsync(BackupType backupType, CancellationToken cancellationToken)
     {
         var (backupOptions, driveOptions) = optionsResolver.Resolve(backupType);
-        using var client = await DriveClient.CreateAsync(driveOptions, cancellationToken);
+        using var client = await DriveClient.CreateAsync(driveOptions, secretClient, cancellationToken);
 
         logger.LogInformation("Listing files in folder...");
 

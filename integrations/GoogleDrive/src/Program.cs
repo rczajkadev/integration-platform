@@ -12,6 +12,11 @@ builder.ConfigureFunctionsWebApplication();
 builder.Services.Configure<List<BackupOptions>>(builder.Configuration.GetSection(BackupOptions.SectionName));
 builder.Services.Configure<List<GoogleDriveOptions>>(builder.Configuration.GetSection(GoogleDriveOptions.SectionName));
 
+builder.Services.AddAzureClients(azureBuilder =>
+{
+    azureBuilder.AddSecretClient(new Uri(builder.Configuration["KeyVaultUri"]!));
+});
+
 builder.Services.AddScoped<BackupOptionsResolver>();
 builder.Services.AddScoped<BackupHandler>();
 

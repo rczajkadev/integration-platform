@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.Serialization;
 using System.Text.Json;
+using Azure.Security.KeyVault.Secrets;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2.Responses;
@@ -21,7 +22,10 @@ internal sealed class DriveClient : IDisposable
         _semaphore = new SemaphoreSlim(concurrentDownloads);
     }
 
-    public static async Task<DriveClient> CreateAsync(GoogleDriveOptions options, CancellationToken cancellationToken)
+    public static async Task<DriveClient> CreateAsync(
+        GoogleDriveOptions options,
+        SecretClient secretClient,
+        CancellationToken cancellationToken)
     {
         var (clientId, clientSecret, refreshToken) =
             JsonSerializer.Deserialize<DriveCredentials>(options.JsonCredentials)
@@ -46,6 +50,13 @@ internal sealed class DriveClient : IDisposable
 
         var credential = new UserCredential(flow, "user", token);
         await credential.RefreshTokenAsync(cancellationToken);
+
+        if (credential.Token.RefreshToken != refreshToken)
+        {
+            var newCredentials = new DriveCredentials(clientId, clientSecret, credential.Token.RefreshToken);
+            var secret = new KeyVaultSecret(options.KeyVaultSecretName, JsonSerializer.Serialize(newCredentials));
+            await secretClient.SetSecretAsync(secret, cancellationToken);
+        }
 
         var drive = new DriveService(new BaseClientService.Initializer
         {
