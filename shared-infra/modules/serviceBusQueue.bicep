@@ -2,9 +2,10 @@ import { getResourceName } from '../functions.bicep'
 
 param parentName string
 param queueName string
+param projectName string
 param integrationName string
 
-var name = '${integrationName}-${queueName}'
+var name = '${projectName}-${integrationName}-${queueName}'
 
 resource sbqinttodoistnumberoftaskstmp 'Microsoft.ServiceBus/namespaces/queues@2024-01-01' = {
   name: '${parentName}/${getResourceName('sbq', name)}'

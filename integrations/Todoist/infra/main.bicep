@@ -3,16 +3,13 @@ param integrationName string
 param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
+param sharedServiceBusNamespaceName string
 param todoistApiKeySecretName string
 param todoistApiBaseUrl string
 param setSubtaskLabelsSchedule string
 param removeSubtaskLabelsSchedule string
 param removeDueDateFromSubtasksSchedule string
 param timeZone string
-
-resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
-  name: sharedKeyVaultName
-}
 
 module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
   name: 'functionAppDeploy'
@@ -26,7 +23,7 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
       }
       {
         name: 'TodoistApiKey'
-        value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${todoistApiKeySecretName})'
+        value: '@Microsoft.KeyVault(VaultName=${sharedKeyVaultName};SecretName=${todoistApiKeySecretName})'
       }
       {
         name: 'SetSubtaskLabelsSchedule'
@@ -45,6 +42,16 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
     sharedStorageAccountName: sharedStorageAccountName
     sharedKeyVaultName: sharedKeyVaultName
     timeZone: timeZone
+  }
+}
+
+module numberOfTasksServiceBusQueue '../../../shared-infra/modules/serviceBusQueue.bicep' = {
+  name: 'numberOfTasksServiceBusQueueDeploy'
+  params: {
+    parentName: sharedServiceBusNamespaceName
+    queueName: 'numberoftasks'
+    projectName: projectName
+    integrationName: integrationName
   }
 }
 
