@@ -34,7 +34,7 @@ internal sealed class RemoveDueDateFromSubtasks(ITodoistApi todoist, ILogger<Rem
     {
         logger.LogInformation("Fetching subtask data...");
 
-        var todoistTasks = (await todoist.GetAllTasksByFilterAsync("subtask", cancellationToken))
+        var todoistTasks = (await todoist.GetTasksByFilterAsync("subtask", cancellationToken))
             .Where(t => !string.IsNullOrWhiteSpace(t.ParentId)) // just to make sure
             .Where(t => t.Due is not null)
             .ToList();

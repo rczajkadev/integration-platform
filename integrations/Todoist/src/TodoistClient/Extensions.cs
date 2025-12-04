@@ -2,66 +2,106 @@
 
 internal static class Extensions
 {
-    public static async Task<IEnumerable<TodoistTask>> GetAllTasksAsync(this ITodoistApi api,
-        IList<string> ids,
-        CancellationToken cancellationToken = default)
+    extension(ITodoistApi api)
     {
-        TodoistResponse? response = null;
-        List<TodoistTask> tasks = [];
-
-        do
+        public async Task<IEnumerable<TodoistTask>> GetTasksAsync(
+            IList<string> ids,
+            CancellationToken cancellationToken = default)
         {
-            response = await api.GetTasksAsync(string.Join(",", ids), response?.NextCursor, cancellationToken);
-            tasks.AddRange(response.Results);
-        }
-        while (!string.IsNullOrWhiteSpace(response.NextCursor));
+            TodoistResponse<TodoistTask>? response = null;
+            List<TodoistTask> tasks = [];
 
-        return tasks;
+            do
+            {
+                response = await api.GetTasksAsync(string.Join(",", ids), response?.NextCursor, cancellationToken);
+                tasks.AddRange(response.Results);
+            }
+            while (!string.IsNullOrWhiteSpace(response.NextCursor));
+
+            return tasks;
+        }
+
+        public async Task<IEnumerable<TodoistTask>> GetTasksAsync(
+            CancellationToken cancellationToken = default)
+        {
+            TodoistResponse<TodoistTask>? response = null;
+            List<TodoistTask> tasks = [];
+
+            do
+            {
+                response = await api.GetTasksAsync(response?.NextCursor, cancellationToken);
+                tasks.AddRange(response.Results);
+            }
+            while (!string.IsNullOrWhiteSpace(response.NextCursor));
+
+            return tasks;
+        }
+
+        public async Task<IEnumerable<TodoistTask>> GetTasksByFilterAsync(
+            string query,
+            CancellationToken cancellationToken = default)
+        {
+            TodoistResponse<TodoistTask>? response = null;
+            List<TodoistTask> tasks = [];
+
+            do
+            {
+                response = await api.GetTasksByFilterAsync(query, response?.NextCursor, cancellationToken);
+                tasks.AddRange(response.Results);
+            }
+            while (!string.IsNullOrWhiteSpace(response.NextCursor));
+
+            return tasks;
+        }
+
+        public async Task<int> UpdateTasksAsync(
+            IEnumerable<TodoistTask> tasks,
+            Func<TodoistTask, object> createRequestBody,
+            int concurrentRequests = 5,
+            CancellationToken cancellationToken = default)
+        {
+            using var semaphore = new SemaphoreSlim(concurrentRequests);
+            var updateCounter = 0;
+
+            var apiCallTasks = tasks.Select(async task =>
+            {
+                await semaphore.WaitAsync(cancellationToken);
+
+                try
+                {
+                    var updateRequest = createRequestBody(task);
+                    await api.UpdateTaskAsync(task.Id, updateRequest, cancellationToken);
+                    Interlocked.Increment(ref updateCounter);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+
+            await Task.WhenAll(apiCallTasks);
+            return updateCounter;
+        }
     }
 
-    public static async Task<IEnumerable<TodoistTask>> GetAllTasksByFilterAsync(this ITodoistApi api,
-        string query,
-        CancellationToken cancellationToken = default)
+    extension(TodoistProject project)
     {
-        TodoistResponse? response = null;
-        List<TodoistTask> tasks = [];
-
-        do
+        public int CountTasks(IList<TodoistProject> allProjects, IList<TodoistTask> allTasks)
         {
-            response = await api.GetTasksByFilterAsync(query, response?.NextCursor, cancellationToken);
-            tasks.AddRange(response.Results);
+            return project.GetSubprojects(allProjects)
+                .Aggregate(
+                    allTasks.Count(t => t.ProjectId == project.Id),
+                    (counter, next) => counter + allTasks.Count(t => t.ProjectId == next.Id));
         }
-        while (!string.IsNullOrWhiteSpace(response.NextCursor));
 
-        return tasks;
-    }
-
-    public static async Task<int> UpdateTasksAsync(this ITodoistApi api,
-        IEnumerable<TodoistTask> tasks,
-        Func<TodoistTask, object> createRequestBody,
-        int concurrentRequests = 5,
-        CancellationToken cancellationToken = default)
-    {
-        using var semaphore = new SemaphoreSlim(concurrentRequests);
-        var updateCounter = 0;
-
-        var apiCallTasks = tasks.Select(async task =>
+        public IEnumerable<TodoistProject> GetSubprojects(IList<TodoistProject> allProjects)
         {
-            await semaphore.WaitAsync(cancellationToken);
+            var subprojects = allProjects.Where(p => p.ParentId == project.Id).ToList();
 
-            try
-            {
-                var updateRequest = createRequestBody(task);
-                await api.UpdateTaskAsync(task.Id, updateRequest, cancellationToken);
-                Interlocked.Increment(ref updateCounter);
-            }
-            finally
-            {
-                semaphore.Release();
-            }
-        });
+            if (subprojects.Count == 0) return subprojects;
 
-        await Task.WhenAll(apiCallTasks);
-        return updateCounter;
+            var subprojectsRecursive = subprojects.SelectMany(p => p.GetSubprojects(allProjects));
+            return subprojects.Concat(subprojectsRecursive);
+        }
     }
 }

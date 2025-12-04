@@ -37,7 +37,7 @@ internal sealed class SetSubtaskLabels(ITodoistApi todoist, ILogger<SetSubtaskLa
     {
         logger.LogInformation("Fetching subtask data...");
 
-        var todoistTasks = (await todoist.GetAllTasksByFilterAsync("subtask", cancellationToken))
+        var todoistTasks = (await todoist.GetTasksByFilterAsync("subtask", cancellationToken))
             .Where(t => !string.IsNullOrWhiteSpace(t.ParentId)) // just to make sure
             .Where(t => !t.Labels.Contains(Constants.SubtaskLabel) || t.Labels.Count() > 1)
             .ToList();
@@ -81,7 +81,7 @@ internal sealed class SetSubtaskLabels(ITodoistApi todoist, ILogger<SetSubtaskLa
         var group = todoistTasks.GroupBy(t => t.ParentId).ToList();
         var parentIds = group.Select(t => t.Key).ToList();
 
-        var parents = await todoist.GetAllTasksAsync(parentIds, cancellationToken);
+        var parents = await todoist.GetTasksAsync(parentIds, cancellationToken);
 
         var updatedCount = await todoist.UpdateTasksAsync(
             parents,

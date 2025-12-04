@@ -30,3 +30,5 @@ resource sbqinttodoistnumberoftaskstmp 'Microsoft.ServiceBus/namespaces/queues@2
     enableExpress: false
   }
 }
+
+output name string = sbqinttodoistnumberoftaskstmp.name
