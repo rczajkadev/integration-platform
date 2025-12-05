@@ -1,6 +1,6 @@
 ﻿namespace Integrations.Contracts.Todoist;
 
-internal sealed record NumberOfTasksInProjects(
+public sealed record NumberOfTasksInProjects(
     int NextActions,
     int Someday,
     int Recurring);
