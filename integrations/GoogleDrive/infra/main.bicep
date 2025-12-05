@@ -3,6 +3,8 @@ param integrationName string
 param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
+param sharedServiceBusNamespaceName string
+param numberOfTasksServiceBusQueueName string
 param driveWorkJsonCredentialsSecretName string
 param drivePersonalJsonCredentialsSecretName string
 param googleApplicationName string
@@ -30,6 +32,10 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
       {
         name: 'KeyVaultUri'
         value: keyVault.properties.vaultUri
+      }
+      {
+        name: 'NumberOfTasksServiceBusQueueName'
+        value: numberOfTasksServiceBusQueueName
       }
       {
         name: 'AccountingDocumentationBackupCronSchedule'
@@ -123,6 +129,7 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
     sharedAppServicePlanName: sharedAppServicePlanName
     sharedStorageAccountName: sharedStorageAccountName
     sharedKeyVaultName: sharedKeyVaultName
+    sharedServiceBusNamespaceName: sharedServiceBusNamespaceName
     timeZone: timeZone
   }
 }

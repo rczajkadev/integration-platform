@@ -6,6 +6,7 @@ param customAppSettings array
 param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
+param sharedServiceBusNamespaceName string
 param timeZone string
 param location string = resourceGroup().location
 
@@ -21,6 +22,15 @@ resource keyVault 'Microsoft.KeyVault/vaults@2025-05-01' existing = {
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2024-11-01' existing = {
   name: sharedAppServicePlanName
+}
+
+resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2024-01-01' existing = {
+  name: sharedServiceBusNamespaceName
+}
+
+resource serviceBusAuthorizationRules 'Microsoft.ServiceBus/namespaces/AuthorizationRules@2024-01-01' existing = {
+  name: 'RootManageSharedAccessKey'
+  parent: serviceBusNamespace
 }
 
 resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
@@ -59,6 +69,10 @@ resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
+        }
+        {
+          name: 'ServiceBusConnectionString'
+          value: serviceBusAuthorizationRules.listKeys().primaryConnectionString
         }
       ], customAppSettings)
     }

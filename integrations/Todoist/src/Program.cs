@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using Integrations.Todoist;
 using Integrations.Todoist.Options;
 using Integrations.Todoist.TodoistClient;
 using Microsoft.Azure.Functions.Worker.Builder;

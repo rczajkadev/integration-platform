@@ -15,19 +15,10 @@ param todoistSomedayProjectId string
 param todoistRecurringProjectId string
 param timeZone string
 
-resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2024-01-01' existing = {
-  name: sharedServiceBusNamespaceName
-}
-
-resource serviceBusAuthorizationRules 'Microsoft.ServiceBus/namespaces/AuthorizationRules@2024-01-01' existing = {
-  name: 'RootManageSharedAccessKey'
-  parent: serviceBusNamespace
-}
-
 module numberOfTasksServiceBusQueue '../../../shared-infra/modules/serviceBusQueue.bicep' = {
   name: 'numberOfTasksServiceBusQueueDeploy'
   params: {
-    parentName: serviceBusNamespace.name
+    parentName: sharedServiceBusNamespaceName
     queueName: 'numberoftasks'
     projectName: projectName
     integrationName: integrationName
@@ -40,10 +31,6 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
     projectName: projectName
     integrationName: integrationName
     customAppSettings: [
-      {
-        name: 'ServiceBusConnectionString'
-        value: serviceBusAuthorizationRules.listKeys().primaryConnectionString
-      }
       {
         name: 'TodoistApiBaseUrl'
         value: todoistApiBaseUrl
@@ -88,6 +75,7 @@ module functionApp '../../../shared-infra/modules/functionApp.bicep' = {
     sharedAppServicePlanName: sharedAppServicePlanName
     sharedStorageAccountName: sharedStorageAccountName
     sharedKeyVaultName: sharedKeyVaultName
+    sharedServiceBusNamespaceName: sharedServiceBusNamespaceName
     timeZone: timeZone
   }
 }
