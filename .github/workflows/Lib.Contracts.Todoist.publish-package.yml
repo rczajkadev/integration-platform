@@ -6,11 +6,6 @@ on:
     paths:
       - 'libraries/Contracts.Todoist/**'
 
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'libraries/Contracts.Todoist/**'
-
   workflow_dispatch:
 
 permissions:

@@ -9,14 +9,6 @@ on:
       - 'Directory.*.props'
       - 'global.json'
 
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'integrations/Template/infra/**'
-      - 'integrations/Template/src/**'
-      - 'Directory.*.props'
-      - 'global.json'
-
   workflow_dispatch:
 
 concurrency:
