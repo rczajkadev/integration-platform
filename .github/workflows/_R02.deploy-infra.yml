@@ -19,7 +19,7 @@ jobs:
       app-name: ${{ steps.deploy.outputs.app-name }}
     steps:
       - name: Download infrastructure artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: infra
           path: infra
