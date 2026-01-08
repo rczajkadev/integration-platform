@@ -1,0 +1,19 @@
+name: NuGet Options.Generator - Publish Package
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'libraries/Options.Generator/**'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    uses: ./.github/workflows/_R06.publish-package.yml
+    with:
+      project: Options.Generator

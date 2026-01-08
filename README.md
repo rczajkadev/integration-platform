@@ -15,6 +15,21 @@ From a bash shell:
 ./scripts/create_integration.sh <integration-name>
 ```
 
+## Local NuGet packages
+
+Local restores use `nuget.config` with `artifacts/nuget` as a package source.
+Build local packages with:
+
+```bash
+./scripts/build_local_nuget.sh
+```
+
+For production restores, use `nuget.prod.config`:
+
+```bash
+dotnet restore --configfile nuget.prod.config
+```
+
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).

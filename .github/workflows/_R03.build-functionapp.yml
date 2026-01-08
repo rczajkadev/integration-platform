@@ -27,11 +27,12 @@ jobs:
           dotnet nuget update source github \
             --username "${{ github.repository_owner }}" \
             --password "${{ secrets.GITHUB_TOKEN }}" \
-            --store-password-in-clear-text
+            --store-password-in-clear-text \
+            --configfile "${{ github.workspace }}/nuget.prod.config"
 
       - name: Restore dependencies
         working-directory: ${{ inputs.integration-directory }}
-        run: dotnet restore
+        run: dotnet restore --configfile "${{ github.workspace }}/nuget.prod.config"
 
       - name: Build
         working-directory: ${{ inputs.integration-directory }}

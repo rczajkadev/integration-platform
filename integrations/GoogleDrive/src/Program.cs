@@ -1,5 +1,6 @@
 using Integrations.GoogleDrive.Backups;
 using Integrations.GoogleDrive.Options;
+using Integrations.Options;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,12 +10,15 @@ var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
-builder.Services.Configure<List<BackupOptions>>(builder.Options.Backup);
-builder.Services.Configure<List<GoogleDriveOptions>>(builder.Options.GoogleDrive);
+var options = builder.GetOptions<Options>();
+builder.Services.Configure<List<BackupOptions>>(options.Backup);
+builder.Services.Configure<List<GoogleDriveOptions>>(options.GoogleDrive);
 
 builder.Services.AddAzureClients(azureBuilder =>
 {
-    var keyVaultUri = builder.Options.KeyVaultUri ?? throw new InvalidOperationException("'KeyVaultUri' not set");
+    const string keyVaultUriKey = "KeyVaultUri";
+    var exception = new InvalidOperationException($"'{keyVaultUriKey}' not set");
+    var keyVaultUri = builder.Configuration[keyVaultUriKey] ?? throw exception;
     azureBuilder.AddSecretClient(new Uri(keyVaultUri));
 });
 

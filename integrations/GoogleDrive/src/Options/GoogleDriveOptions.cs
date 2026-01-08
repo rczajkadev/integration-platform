@@ -1,11 +1,11 @@
-﻿using Integrations.GoogleDrive.Drive;
+using Integrations.GoogleDrive.Drive;
+using Integrations.Options;
 
 namespace Integrations.GoogleDrive.Options;
 
+[OptionsSection("GoogleDrive")]
 internal sealed class GoogleDriveOptions
 {
-    public const string SectionName = "GoogleDrive";
-
     public AccountType AccountType { get; init; }
 
     public string ApplicationName { get; init; } = null!;

@@ -12,6 +12,8 @@
     <PackageReference Include="Azure.Security.KeyVault.Secrets" />
     <PackageReference Include="Google.Apis.Drive.v3" />
     <PackageReference Include="Integrations.Contracts.Todoist" />
+    <PackageReference Include="Integrations.Options" />
+    <PackageReference Include="Integrations.Options.Generator" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.ServiceBus" />

@@ -1,12 +1,12 @@
-﻿using Integrations.GoogleDrive.Backups;
+using Integrations.GoogleDrive.Backups;
 using Integrations.GoogleDrive.Drive;
+using Integrations.Options;
 
 namespace Integrations.GoogleDrive.Options;
 
+[OptionsSection("Backup")]
 internal sealed class BackupOptions
 {
-    public const string SectionName = "Backup";
-
     public BackupType BackupType { get; init; }
 
     public AccountType AccountType { get; init; }

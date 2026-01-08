@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using Integrations.Options;
 using Integrations.Todoist.Options;
 using Integrations.Todoist.TodoistClient;
 using Microsoft.Azure.Functions.Worker.Builder;
@@ -10,18 +11,8 @@ var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
-builder.Services.AddOptions<TodoistProjectIdsOptions>()
-    .Bind(builder.Options.TodoistProjectIds)
-    .Validate(
-        o => !string.IsNullOrWhiteSpace(o.NextActions),
-        "'TodoistProjectIds__NextActions' is required.")
-    .Validate(
-        o => !string.IsNullOrWhiteSpace(o.Someday),
-        "'TodoistProjectIds__Someday' is required.")
-    .Validate(
-        o => !string.IsNullOrWhiteSpace(o.Recurring),
-        "'TodoistProjectIds__Recurring' is required.")
-    .ValidateOnStart();
+var options = builder.GetOptions<Options>();
+builder.Services.Configure<TodoistProjectIdsOptions>(options.TodoistProjectIds);
 
 builder.Services
     .AddRefitClient<ITodoistApi>(new RefitSettings
@@ -30,8 +21,9 @@ builder.Services
     })
     .ConfigureHttpClient(client =>
     {
-        var baseUrl = builder.Options.TodoistApiBaseUrl;
-        var apiKey = builder.Options.TodoistApiKey;
+        var configuration = builder.Configuration;
+        var baseUrl = configuration["TodoistApiBaseUrl"];
+        var apiKey = configuration["TodoistApiKey"];
 
         if (string.IsNullOrWhiteSpace(baseUrl) || string.IsNullOrWhiteSpace(apiKey))
             throw new InvalidOperationException("Invalid Todoist API configuration");

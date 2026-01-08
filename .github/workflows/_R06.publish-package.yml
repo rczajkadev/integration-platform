@@ -32,7 +32,7 @@ jobs:
 
       - name: Restore dependencies
         working-directory: ${{ env.PROJECT_DIRECTORY }}
-        run: dotnet restore
+        run: dotnet restore --configfile "${{ github.workspace }}/nuget.prod.config"
 
       - name: Build
         working-directory: ${{ env.PROJECT_DIRECTORY }}

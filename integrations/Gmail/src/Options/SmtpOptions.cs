@@ -1,9 +1,10 @@
+using Integrations.Options;
+
 namespace Integrations.Gmail.Options;
 
+[OptionsSection("Smtp")]
 internal sealed class SmtpOptions
 {
-    public const string SectionName = "Smtp";
-
     public string Host { get; init; } = null!;
 
     public int Port { get; init; } = 587;
