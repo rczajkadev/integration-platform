@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>Integrations.Template</AssemblyName>
+    <AssemblyName>Integrations.IntegrationTemplate</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
     <AzureFunctionsVersion>V4</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>

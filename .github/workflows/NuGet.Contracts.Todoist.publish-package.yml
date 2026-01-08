@@ -1,10 +1,10 @@
-name: Lib Template - Publish Package
+name: NuGet Contracts.Todoist - Publish Package
 
 on:
   push:
     branches: [ main ]
     paths:
-      - 'libraries/Template/**'
+      - 'libraries/Contracts.Todoist/**'
 
   workflow_dispatch:
 
@@ -16,4 +16,4 @@ jobs:
   publish:
     uses: ./.github/workflows/_R06.publish-package.yml
     with:
-      project: Template
+      project: Contracts.Todoist

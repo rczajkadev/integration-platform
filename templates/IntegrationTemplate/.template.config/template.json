@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/template",
-  "author": "Rafał Czajka",
+  "author": "Rafal Czajka",
   "classifications": [ "Integration", "Azure Function" ],
-  "identity": "Integrations.Template",
+  "identity": "Integrations.IntegrationTemplate",
   "name": "Integration Template",
   "shortName": "integration",
-  "sourceName": "Template",
+  "sourceName": "IntegrationTemplate",
   "tags": {
     "language": "C#",
     "type": "project"

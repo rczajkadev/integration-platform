@@ -2,7 +2,7 @@
   "solution": {
     "path": "..\\..\\integration-platform.slnx",
     "projects": [
-      "libraries\\Template\\Template.csproj"
+      "integrations\\IntegrationTemplate\\src\\IntegrationTemplate.csproj"
     ]
   }
 }

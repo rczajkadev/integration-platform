@@ -1,8 +1,0 @@
-{
-  "solution": {
-    "path": "..\\..\\integration-platform.slnx",
-    "projects": [
-      "integrations\\Template\\src\\Template.csproj"
-    ]
-  }
-}

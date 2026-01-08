@@ -4,5 +4,5 @@ root_dir=$(git rev-parse --show-toplevel)
 
 cd $root_dir
 
-dotnet new install ./libraries/_Template
-dotnet new install ./libraries/_PackageTemplate
+dotnet new install ./templates/IntegrationTemplate
+dotnet new install ./templates/NuGetTemplate

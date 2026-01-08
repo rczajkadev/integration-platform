@@ -1,7 +1,7 @@
 using './main.bicep'
 
 param projectName = 'int'
-param integrationName = toLower('Template')
+param integrationName = toLower('IntegrationTemplate')
 param sharedAppServicePlanName = 'asp-int-shared'
 param sharedStorageAccountName = 'stintsharedg7lv'
 param sharedKeyVaultName = 'kv-int-shared-k4h7'

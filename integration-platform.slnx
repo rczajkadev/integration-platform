@@ -6,7 +6,6 @@
     <!-- <Project Path="integrations/_GoogleTokenRetriever/_GoogleTokenRetriever.csproj" /> -->
   </Folder>
   <Folder Name="/libraries/">
-    <!-- <Project Path="libraries/_Template/src/Template.csproj" /> -->
     <Project Path="libraries/Contracts.Todoist/Contracts.Todoist.csproj" />
   </Folder>
 </Solution>

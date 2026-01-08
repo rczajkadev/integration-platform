@@ -2,10 +2,10 @@
   "$schema": "https://json.schemastore.org/template",
   "author": "Rafal Czajka",
   "classifications": [ "Library", "NuGet" ],
-  "identity": "Integrations.PackageTemplate",
-  "name": "Integration Package Template",
+  "identity": "Integrations.NuGetTemplate",
+  "name": "Integration NuGet Template",
   "shortName": "integration-package",
-  "sourceName": "Template",
+  "sourceName": "NuGetTemplate",
   "tags": {
     "language": "C#",
     "type": "project"
