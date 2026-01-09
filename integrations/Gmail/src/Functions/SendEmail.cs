@@ -30,6 +30,9 @@ internal sealed class SendEmail(
         [FromBody] SendEmailRequest request,
         CancellationToken cancellationToken)
     {
+        if (!string.IsNullOrWhiteSpace(request.To)) // TODO: Remove - temporary solution for testing
+            return Results.BadRequest();
+
         var recipientsStr = string.IsNullOrWhiteSpace(request.To)
             ? options.Value.From
             : request.To;
