@@ -1,0 +1,63 @@
+openapi: 3.0.3
+
+info:
+  title: Integration Platform - SendEmail
+  description: API for sending emails via the SendEmail function.
+  version: 0.0.0
+servers:
+  - url: https://FUNCTION_APP.azurewebsites.net
+
+paths:
+  /api/send-email:
+    post:
+      operationId: sendEmail
+      summary: Send an email
+      description: Sends an email using configured SMTP settings.
+      security:
+        - functionKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendEmailRequest"
+            examples:
+              basic:
+                summary: Basic request
+                value:
+                  to: "chandler@friends.com"
+                  subject: "How you doin'?"
+                  body: "Hello Chandler, how are you?"
+                  isHtml: false
+      responses:
+        202:
+          description: Accepted
+        400:
+          description: Invalid recipients or request.
+        500:
+          description: Server error while sending email.
+
+components:
+  securitySchemes:
+    functionKey:
+      type: apiKey
+      in: query
+      name: code
+
+  schemas:
+    SendEmailRequest:
+      type: object
+      properties:
+        to:
+          type: string
+          nullable: true
+          description: Optional recipients list separated by comma or semicolon. Defaults to SmtpOptions.From when omitted.
+        subject:
+          type: string
+          required: true
+        body:
+          type: string
+          required: true
+        isHtml:
+          type: boolean
+          default: false

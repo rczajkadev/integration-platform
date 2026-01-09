@@ -1,0 +1,14 @@
+<Project>
+  <ItemGroup>
+    <OpenApiSpec Include="$(MSBuildThisFileDirectory)**\src\OpenApi\*.yaml" />
+    <OpenApiSpec Include="$(MSBuildThisFileDirectory)**\src\OpenApi\*.yml" />
+  </ItemGroup>
+
+  <Target Name="CopyOpenApiSpecs" AfterTargets="Build" Condition="'$(SkipOpenApiCopy)' != 'true'">
+    <MakeDir Directories="$(MSBuildThisFileDirectory)..\openapi" />
+    <Copy
+      SourceFiles="@(OpenApiSpec)"
+      DestinationFiles="@(OpenApiSpec->'$(MSBuildThisFileDirectory)..\openapi\%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true" />
+  </Target>
+</Project>
