@@ -1,9 +1,9 @@
 # Integration Platform
 
-[![Shared](https://img.shields.io/github/actions/workflow/status/pxbunny/integration-platform/Shared.deploy-infra.yml?label=Shared)](https://github.com/pxbunny/integration-platform/actions/workflows/Shared.deploy-infra.yml)
-[![Google Drive](https://img.shields.io/github/actions/workflow/status/pxbunny/integration-platform/Gmail.deploy.yml?label=Gmail)](https://github.com/pxbunny/integration-platform/actions/workflows/Gmail.deploy.yml)
-[![Google Drive](https://img.shields.io/github/actions/workflow/status/pxbunny/integration-platform/GoogleDrive.deploy.yml?label=Google%20Drive)](https://github.com/pxbunny/integration-platform/actions/workflows/GoogleDrive.deploy.yml)
-[![Todoist](https://img.shields.io/github/actions/workflow/status/pxbunny/integration-platform/Todoist.deploy.yml?label=Todoist)](https://github.com/pxbunny/integration-platform/actions/workflows/Todoist.deploy.yml)
+[![Shared](https://img.shields.io/github/actions/workflow/status/rczajkadev/integration-platform/Shared.deploy-infra.yml?label=Shared)](https://github.com/rczajkadev/integration-platform/actions/workflows/Shared.deploy-infra.yml)
+[![Google Drive](https://img.shields.io/github/actions/workflow/status/rczajkadev/integration-platform/Gmail.deploy.yml?label=Gmail)](https://github.com/rczajkadev/integration-platform/actions/workflows/Gmail.deploy.yml)
+[![Google Drive](https://img.shields.io/github/actions/workflow/status/rczajkadev/integration-platform/GoogleDrive.deploy.yml?label=Google%20Drive)](https://github.com/rczajkadev/integration-platform/actions/workflows/GoogleDrive.deploy.yml)
+[![Todoist](https://img.shields.io/github/actions/workflow/status/rczajkadev/integration-platform/Todoist.deploy.yml?label=Todoist)](https://github.com/rczajkadev/integration-platform/actions/workflows/Todoist.deploy.yml)
 
 > Platform for running automated workflows between external services.
 
