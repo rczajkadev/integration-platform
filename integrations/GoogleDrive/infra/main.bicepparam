@@ -6,8 +6,6 @@ param sharedAppServicePlanName = 'asp-int-shared'
 param sharedStorageAccountName = 'stintsharedg7lv'
 param sharedKeyVaultName = 'kv-int-shared-k4h7'
 param sharedServiceBusNamespaceName = 'sbns-int-shared'
-// Archived function: AddDataToTodoistSpreadsheet
-// param numberOfTasksServiceBusQueueName = 'sbq-int-todoist-numberoftasks'
 param driveWorkJsonCredentialsSecretName = 'GoogleDrive-DriveWorkJsonCredentials'
 param drivePersonalJsonCredentialsSecretName = 'GoogleDrive-DrivePersonalJsonCredentials'
 param googleApplicationName = 'Integration Platform'

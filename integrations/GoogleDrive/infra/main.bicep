@@ -4,8 +4,6 @@ param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
 param sharedServiceBusNamespaceName string
-// Archived function: AddDataToTodoistSpreadsheet
-// param numberOfTasksServiceBusQueueName string
 param driveWorkJsonCredentialsSecretName string
 param drivePersonalJsonCredentialsSecretName string
 param googleApplicationName string
@@ -34,11 +32,6 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
         name: 'KeyVaultUri'
         value: keyVault.properties.vaultUri
       }
-      // Archived function: AddDataToTodoistSpreadsheet
-      // {
-      //   name: 'NumberOfTasksServiceBusQueueName'
-      //   value: numberOfTasksServiceBusQueueName
-      // }
       {
         name: 'AccountingDocumentationBackupCronSchedule'
         value: accountingDocumentationBackupCronSchedule
