@@ -1,0 +1,19 @@
+name: NuGet Clients.Gmail - Publish Package
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'libraries/Clients.Gmail/**'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    uses: ./.github/workflows/_R06.publish-package.yml
+    with:
+      project: Clients.Gmail

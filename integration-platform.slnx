@@ -6,6 +6,7 @@
     <!-- <Project Path="integrations/_GoogleTokenRetriever/_GoogleTokenRetriever.csproj" /> -->
   </Folder>
   <Folder Name="/libraries/">
+    <Project Path="libraries/Clients.Gmail/Clients.Gmail.csproj" />
     <Project Path="libraries/Contracts.Todoist/Contracts.Todoist.csproj" />
     <Project Path="libraries/Options/Options.csproj" />
     <Project Path="libraries/Options.Generator/Options.Generator.csproj" />
