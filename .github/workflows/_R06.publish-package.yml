@@ -30,9 +30,10 @@ jobs:
         with:
           source-url: ${{ env.SOURCE }}
 
-      - name: Restore dependencies
-        working-directory: ${{ env.PROJECT_DIRECTORY }}
-        run: dotnet restore --configfile "${{ github.workspace }}/nuget.prod.config"
+      - name: NuGet auth and restore
+        uses: ./.github/actions/nuget-auth-restore
+        with:
+          working-directory: ${{ env.PROJECT_DIRECTORY }}
 
       - name: Build
         working-directory: ${{ env.PROJECT_DIRECTORY }}

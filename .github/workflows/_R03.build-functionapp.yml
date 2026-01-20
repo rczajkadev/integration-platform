@@ -22,17 +22,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
 
-      - name: Set credentials for GitHub source
-        run: |
-          dotnet nuget update source github \
-            --username "${{ github.repository_owner }}" \
-            --password "${{ secrets.GITHUB_TOKEN }}" \
-            --store-password-in-clear-text \
-            --configfile "${{ github.workspace }}/nuget.prod.config"
-
-      - name: Restore dependencies
-        working-directory: ${{ inputs.integration-directory }}
-        run: dotnet restore --configfile "${{ github.workspace }}/nuget.prod.config"
+      - name: NuGet auth and restore
+        uses: ./.github/actions/nuget-auth-restore
+        with:
+          working-directory: ${{ inputs.integration-directory }}
 
       - name: Build
         working-directory: ${{ inputs.integration-directory }}
