@@ -37,6 +37,26 @@ internal static class Extensions
             return tasks;
         }
 
+        public async Task<IEnumerable<TodoistTask>> GetTasksByProjectAsync(
+            string projectId,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrWhiteSpace(projectId))
+                return [];
+
+            TodoistResponse<TodoistTask>? response = null;
+            List<TodoistTask> tasks = [];
+
+            do
+            {
+                response = await api.GetTasksByProjectAsync(projectId, response?.NextCursor, cancellationToken);
+                tasks.AddRange(response.Results);
+            }
+            while (!string.IsNullOrWhiteSpace(response.NextCursor));
+
+            return tasks;
+        }
+
         public async Task<IEnumerable<TodoistTask>> GetTasksByFilterAsync(
             string query,
             CancellationToken cancellationToken = default)

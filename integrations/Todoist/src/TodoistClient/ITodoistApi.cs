@@ -19,6 +19,12 @@ internal interface ITodoistApi
         string? cursor = null,
         CancellationToken cancellationToken = default);
 
+    [Get("/tasks?project_id={projectId}&cursor={cursor}")]
+    Task<TodoistResponse<TodoistTask>> GetTasksByProjectAsync(
+        string projectId,
+        string? cursor = null,
+        CancellationToken cancellationToken = default);
+
     [Get("/tasks/filter?query={query}&cursor={cursor}")]
     Task<TodoistResponse<TodoistTask>> GetTasksByFilterAsync(
         string query,

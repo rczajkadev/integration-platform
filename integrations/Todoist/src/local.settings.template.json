@@ -10,8 +10,7 @@
     "SetSubtaskLabelsSchedule": "0 0 2 * * *",
     "RemoveSubtaskLabelsSchedule": "0 15 2 * * *",
     "RemoveDueDateFromSubtasksSchedule": "0 30 2 * * *",
-    "CountTasksInProjectsSchedule": "0 0 22 * * *",
-    "NumberOfTasksServiceBusQueueName": "",
+    "EnforceRecurringTaskRulesSchedule": "0 45 2 * * *",
     "TodoistProjectIds__Recurring": ""
   }
 }

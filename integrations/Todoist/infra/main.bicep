@@ -9,6 +9,8 @@ param todoistApiBaseUrl string
 param setSubtaskLabelsSchedule string
 param removeSubtaskLabelsSchedule string
 param removeDueDateFromSubtasksSchedule string
+param enforceRecurringTaskRulesSchedule string
+param todoistRecurringProjectId string
 param timeZone string
 
 module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
@@ -36,6 +38,14 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
       {
         name: 'RemoveDueDateFromSubtasksSchedule'
         value: removeDueDateFromSubtasksSchedule
+      }
+      {
+        name: 'EnforceRecurringTaskRulesSchedule'
+        value: enforceRecurringTaskRulesSchedule
+      }
+      {
+        name: 'TodoistProjectIds__Recurring'
+        value: todoistRecurringProjectId
       }
     ]
     sharedAppServicePlanName: sharedAppServicePlanName

@@ -22,6 +22,13 @@ internal sealed record TodoistTask(
     [JsonProperty(PropertyName = "project_id")] string ProjectId,
     [JsonProperty(PropertyName = "parent_id")] string ParentId,
     IEnumerable<string> Labels,
-    object? Due, // TODO: specify type if needed
+    TodoistTaskDue? Due,
     string Content,
     string Description) : ITodoistItem;
+
+internal sealed record TodoistTaskDue(
+    [JsonProperty(PropertyName = "is_recurring")] bool IsRecurring,
+    [JsonProperty(PropertyName = "string")] string? String,
+    [JsonProperty(PropertyName = "date")] string? Date,
+    [JsonProperty(PropertyName = "datetime")] string? DateTime,
+    [JsonProperty(PropertyName = "timezone")] string? Timezone);
