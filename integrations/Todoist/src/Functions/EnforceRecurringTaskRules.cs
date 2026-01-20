@@ -47,73 +47,98 @@ internal sealed class EnforceRecurringTaskRules(
 
         logger.LogInformation("Fetching tasks from Recurring project...");
 
-        var tasks = (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken)).ToList();
+        var tasksInRecurringProject =
+            (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken)).ToList();
 
-        if (tasks.Count == 0)
+        if (tasksInRecurringProject.Count == 0)
         {
             logger.LogInformation("No tasks found.");
             return;
         }
 
-        var updates = new Dictionary<string, IReadOnlyCollection<string>>();
-        var nonRecurringDueTasks = new List<TodoistTask>();
-        var list = new List<string>();
+        var labelsToUpdate = new Dictionary<string, IReadOnlyCollection<string>>();
+        var tasksWithNonRecurringDueDate = new List<TodoistTask>();
 
-        foreach (var task in tasks)
+        foreach (var task in tasksInRecurringProject)
         {
-            list.AddRange(task.Labels);
-
-            var labels = task.Labels as IReadOnlyCollection<string> ?? list;
-            var due = task.Due;
-
-            if (due is null)
-            {
-                if (!HasOnlyInactiveLabel(labels))
-                {
-                    updates[task.Id] = [Constants.InactiveLabel];
-                }
-
-                continue;
-            }
-
-            if (!due.IsRecurring)
-            {
-                nonRecurringDueTasks.Add(task);
-                continue;
-            }
-
-            if (HasInactiveLabel(labels))
-            {
-                var newLabels = labels
-                    .Where(label => !IsInactiveLabel(label))
-                    .ToArray();
-
-                updates[task.Id] = newLabels;
-            }
+            ApplyRulesToTask(task, labelsToUpdate, tasksWithNonRecurringDueDate);
         }
 
-        if (updates.Count > 0)
+        await ApplyLabelUpdatesIfNeededAsync(tasksInRecurringProject, labelsToUpdate, cancellationToken);
+        LogNumberOfTasksWithNonRecurringDueDates(tasksWithNonRecurringDueDate);
+    }
+
+    private static void ApplyRulesToTask(
+        TodoistTask task,
+        IDictionary<string, IReadOnlyCollection<string>> labelsToUpdate,
+        List<TodoistTask> tasksWithNonRecurringDueDate)
+    {
+        var labels = GetLabelsSnapshot(task.Labels);
+        var due = task.Due;
+
+        if (due is null)
         {
-            var tasksToUpdate = tasks.Where(task => updates.ContainsKey(task.Id)).ToList();
-
-            var updatedCount = await todoist.UpdateTasksAsync(
-                tasksToUpdate,
-                task => new { labels = updates[task.Id] },
-                cancellationToken: cancellationToken);
-
-            logger.LogInformation("Updated labels for {UpdatedCount} tasks.", updatedCount);
+            EnsureTaskHasOnlyInactiveLabel(task, labels, labelsToUpdate);
+            return;
         }
-        else
+
+        if (!due.IsRecurring)
+        {
+            tasksWithNonRecurringDueDate.Add(task);
+            return;
+        }
+
+        EnsureRecurringTaskDoesNotHaveInactiveLabel(task, labels, labelsToUpdate);
+    }
+
+    private async Task ApplyLabelUpdatesIfNeededAsync(
+        IReadOnlyCollection<TodoistTask> tasks,
+        Dictionary<string, IReadOnlyCollection<string>> labelsToUpdate,
+        CancellationToken cancellationToken)
+    {
+        if (labelsToUpdate.Count == 0)
         {
             logger.LogInformation("No label updates required.");
+            return;
         }
 
-        if (nonRecurringDueTasks.Count > 0)
-        {
-            logger.LogWarning(
-                "Found {TaskCount} tasks with non-recurring due dates in Recurring project.",
-                nonRecurringDueTasks.Count);
-        }
+        var tasksToUpdate = tasks.Where(task => labelsToUpdate.ContainsKey(task.Id)).ToList();
+
+        var updatedCount = await todoist.UpdateTasksAsync(
+            tasksToUpdate,
+            task => new { labels = labelsToUpdate[task.Id] },
+            cancellationToken: cancellationToken);
+
+        logger.LogInformation("Updated labels for {UpdatedCount} tasks.", updatedCount);
+    }
+
+    private static IReadOnlyCollection<string> GetLabelsSnapshot(IEnumerable<string> labels)
+    {
+        return labels as IReadOnlyCollection<string> ?? [..labels];
+    }
+
+    private static void EnsureTaskHasOnlyInactiveLabel(
+        TodoistTask task,
+        IReadOnlyCollection<string> labels,
+        IDictionary<string, IReadOnlyCollection<string>> labelsToUpdate)
+    {
+        if (HasOnlyInactiveLabel(labels)) return;
+
+        labelsToUpdate[task.Id] = [Constants.InactiveLabel];
+    }
+
+    private static void EnsureRecurringTaskDoesNotHaveInactiveLabel(
+        TodoistTask task,
+        IReadOnlyCollection<string> labels,
+        IDictionary<string, IReadOnlyCollection<string>> labelsToUpdate)
+    {
+        if (!HasInactiveLabel(labels)) return;
+
+        var newLabels = labels
+            .Where(label => !IsInactiveLabel(label))
+            .ToArray();
+
+        labelsToUpdate[task.Id] = newLabels;
     }
 
     private static bool HasOnlyInactiveLabel(IReadOnlyCollection<string> labels)
@@ -129,5 +154,14 @@ internal sealed class EnforceRecurringTaskRules(
     private static bool IsInactiveLabel(string label)
     {
         return string.Equals(label, Constants.InactiveLabel, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private void LogNumberOfTasksWithNonRecurringDueDates(List<TodoistTask> tasksWithNonRecurringDueDate)
+    {
+        if (tasksWithNonRecurringDueDate.Count == 0) return;
+
+        logger.LogWarning(
+            "Found {TaskCount} tasks with non-recurring due dates in Recurring project.",
+            tasksWithNonRecurringDueDate.Count);
     }
 }
