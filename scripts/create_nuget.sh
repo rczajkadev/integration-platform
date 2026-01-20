@@ -10,10 +10,10 @@ fi
 
 cd $root_dir
 
-mkdir ./libraries/$name
+mkdir ./libraries/Public/$name
 
-dotnet new integration-package -n $name -o ./libraries/$name
-dotnet sln add ./libraries/$name/*.csproj -s libraries
+dotnet new integration-package -n $name -o ./libraries/Public/$name
+dotnet sln add ./libraries/Public/$name/*.csproj -s libraries
 
-mv ./libraries/$name/.github/workflows/* ./.github/workflows
-rm -rf ./libraries/$name/.github
+mv ./libraries/Public/$name/.github/workflows/* ./.github/workflows
+rm -rf ./libraries/Public/$name/.github

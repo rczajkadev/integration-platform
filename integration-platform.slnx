@@ -1,15 +1,21 @@
 <Solution>
   <Folder Name="/integrations/">
+    <File Path="integrations/Directory.Build.props" />
+    <File Path="integrations/Directory.Build.targets" />
     <Project Path="integrations/Gmail/src/Gmail.csproj" />
     <Project Path="integrations/GoogleDrive/src/GoogleDrive.csproj" />
     <Project Path="integrations/Todoist/src/Todoist.csproj" />
     <!-- <Project Path="integrations/_GoogleTokenRetriever/_GoogleTokenRetriever.csproj" /> -->
   </Folder>
+  <Folder Name="/libraries/Public/">
+    <Project Path="libraries/Public/Clients.Gmail/Clients.Gmail.csproj" />
+    <Project Path="libraries/Public/Contracts.Gmail/Contracts.Gmail.csproj" />
+  </Folder>
+  <Folder Name="/libraries/Internal/">
+    <Project Path="libraries/Internal/Options/Options.csproj" />
+    <Project Path="libraries/Internal/Options.Generator/Options.Generator.csproj" />
+  </Folder>
   <Folder Name="/libraries/">
-    <Project Path="libraries/Clients.Gmail/Clients.Gmail.csproj" />
-    <Project Path="libraries/Contracts.Gmail/Contracts.Gmail.csproj" />
-    <Project Path="libraries/Contracts.Todoist/Contracts.Todoist.csproj" />
-    <Project Path="libraries/Options/Options.csproj" />
-    <Project Path="libraries/Options.Generator/Options.Generator.csproj" />
+    <File Path="libraries/Directory.Build.props" />
   </Folder>
 </Solution>

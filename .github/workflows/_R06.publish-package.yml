@@ -19,7 +19,7 @@ jobs:
     env:
       NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SOURCE: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
-      PROJECT_DIRECTORY: libraries/${{ inputs.project }}
+      PROJECT_DIRECTORY: libraries/Public/${{ inputs.project }}
 
     steps:
       - name: Checkout repository

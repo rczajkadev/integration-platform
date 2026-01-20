@@ -10,8 +10,6 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Integrations.Contracts.Gmail" />
-    <PackageReference Include="Integrations.Options" />
-    <PackageReference Include="Integrations.Options.Generator" />
     <PackageReference Include="MailKit" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" />

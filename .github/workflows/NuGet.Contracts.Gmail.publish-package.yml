@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'libraries/Contracts.Gmail/**'
+      - 'libraries/Public/Contracts.Gmail/**'
 
   workflow_dispatch:
 
