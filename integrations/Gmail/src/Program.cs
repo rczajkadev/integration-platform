@@ -11,6 +11,6 @@ builder.ConfigureFunctionsWebApplication();
 var options = builder.GetOptions<Options>();
 builder.Services.Configure<SmtpOptions>(options.Smtp);
 
-builder.Services.AddScoped<EmailSenderService>();
+builder.Services.AddSingleton<EmailSenderService>();
 
 builder.Build().Run();
