@@ -7,10 +7,8 @@
     "ServiceBusConnectionString": "",
     "TodoistApiBaseUrl": "https://api.todoist.com/api/v1",
     "TodoistApiKey": "",
-    "SetSubtaskLabelsSchedule": "0 0 2 * * *",
-    "RemoveSubtaskLabelsSchedule": "0 15 2 * * *",
-    "RemoveDueDateFromSubtasksSchedule": "0 30 2 * * *",
-    "EnforceRecurringTaskRulesSchedule": "0 45 2 * * *",
+    "EnforceSubtaskRulesSchedule": "0 0 2 * * *",
+    "EnforceRecurringTaskRulesSchedule": "0 15 2 * * *",
     "TodoistProjectIds__Recurring": ""
   }
 }

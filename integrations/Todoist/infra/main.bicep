@@ -6,9 +6,7 @@ param sharedKeyVaultName string
 param sharedServiceBusNamespaceName string
 param todoistApiKeySecretName string
 param todoistApiBaseUrl string
-param setSubtaskLabelsSchedule string
-param removeSubtaskLabelsSchedule string
-param removeDueDateFromSubtasksSchedule string
+param enforceSubtaskRulesSchedule string
 param enforceRecurringTaskRulesSchedule string
 param todoistRecurringProjectId string
 param timeZone string
@@ -28,16 +26,8 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
         value: '@Microsoft.KeyVault(VaultName=${sharedKeyVaultName};SecretName=${todoistApiKeySecretName})'
       }
       {
-        name: 'SetSubtaskLabelsSchedule'
-        value: setSubtaskLabelsSchedule
-      }
-      {
-        name: 'RemoveSubtaskLabelsSchedule'
-        value: removeSubtaskLabelsSchedule
-      }
-      {
-        name: 'RemoveDueDateFromSubtasksSchedule'
-        value: removeDueDateFromSubtasksSchedule
+        name: 'EnforceSubtaskRulesSchedule'
+        value: enforceSubtaskRulesSchedule
       }
       {
         name: 'EnforceRecurringTaskRulesSchedule'
