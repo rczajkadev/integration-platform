@@ -8,7 +8,7 @@
     <PackageVersion Include="Integrations.Contracts.Gmail" Version="0.0.1" />
     <PackageVersion Include="Integrations.Contracts.Todoist" Version="0.0.2" />
     <PackageVersion Include="Integrations.Options" Version="0.0.1" />
-    <PackageVersion Include="Integrations.Options.Generator" Version="0.0.1" />
+    <PackageVersion Include="Integrations.Options.Generator" Version="0.0.3" />
     <PackageVersion Include="MailKit" Version="4.14.1" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />

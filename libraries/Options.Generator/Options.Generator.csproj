@@ -4,11 +4,10 @@
     <AssemblyName>Integrations.Options.Generator</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
     <LangVersion>latest</LangVersion>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-    <PackageType>Analyzer</PackageType>
     <NoPackageAnalysis>true</NoPackageAnalysis>
   </PropertyGroup>
 
