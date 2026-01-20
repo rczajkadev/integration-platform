@@ -9,21 +9,23 @@ param todoistApiBaseUrl string
 param setSubtaskLabelsSchedule string
 param removeSubtaskLabelsSchedule string
 param removeDueDateFromSubtasksSchedule string
-param countTasksInProjectsSchedule string
-param todoistNextActionsProjectId string
-param todoistSomedayProjectId string
-param todoistRecurringProjectId string
+// Archived function: CountTasksInProjects
+// param countTasksInProjectsSchedule string
+// param todoistNextActionsProjectId string
+// param todoistSomedayProjectId string
+// param todoistRecurringProjectId string
 param timeZone string
 
-module numberOfTasksServiceBusQueue '../../../infrastructure/modules/serviceBusQueue.bicep' = {
-  name: 'numberOfTasksServiceBusQueueDeploy'
-  params: {
-    parentName: sharedServiceBusNamespaceName
-    queueName: 'numberoftasks'
-    projectName: projectName
-    integrationName: integrationName
-  }
-}
+// Archived function: CountTasksInProjects
+// module numberOfTasksServiceBusQueue '../../../infrastructure/modules/serviceBusQueue.bicep' = {
+//   name: 'numberOfTasksServiceBusQueueDeploy'
+//   params: {
+//     parentName: sharedServiceBusNamespaceName
+//     queueName: 'numberoftasks'
+//     projectName: projectName
+//     integrationName: integrationName
+//   }
+// }
 
 module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
   name: 'functionAppDeploy'
@@ -51,26 +53,27 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
         name: 'RemoveDueDateFromSubtasksSchedule'
         value: removeDueDateFromSubtasksSchedule
       }
-      {
-        name: 'CountTasksInProjectsSchedule'
-        value: countTasksInProjectsSchedule
-      }
-      {
-        name: 'NumberOfTasksServiceBusQueueName'
-        value: numberOfTasksServiceBusQueue.outputs.name
-      }
-      {
-        name: 'TodoistProjectIds__NextActions'
-        value: todoistNextActionsProjectId
-      }
-      {
-        name: 'TodoistProjectIds__Someday'
-        value: todoistSomedayProjectId
-      }
-      {
-        name: 'TodoistProjectIds__Recurring'
-        value: todoistRecurringProjectId
-      }
+      // Archived function: CountTasksInProjects
+      // {
+      //   name: 'CountTasksInProjectsSchedule'
+      //   value: countTasksInProjectsSchedule
+      // }
+      // {
+      //   name: 'NumberOfTasksServiceBusQueueName'
+      //   value: numberOfTasksServiceBusQueue.outputs.name
+      // }
+      // {
+      //   name: 'TodoistProjectIds__NextActions'
+      //   value: todoistNextActionsProjectId
+      // }
+      // {
+      //   name: 'TodoistProjectIds__Someday'
+      //   value: todoistSomedayProjectId
+      // }
+      // {
+      //   name: 'TodoistProjectIds__Recurring'
+      //   value: todoistRecurringProjectId
+      // }
     ]
     sharedAppServicePlanName: sharedAppServicePlanName
     sharedStorageAccountName: sharedStorageAccountName
