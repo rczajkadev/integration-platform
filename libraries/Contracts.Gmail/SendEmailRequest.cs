@@ -1,4 +1,4 @@
-namespace Integrations.Clients.Gmail;
+namespace Integrations.Contracts.Gmail;
 
 public sealed record SendEmailRequest(
     string? To,

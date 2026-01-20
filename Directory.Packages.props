@@ -5,6 +5,7 @@
   <ItemGroup>
     <PackageVersion Include="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
     <PackageVersion Include="Google.Apis.Drive.v3" Version="1.73.0.3996" />
+    <PackageVersion Include="Integrations.Contracts.Gmail" Version="0.0.1" />
     <PackageVersion Include="Integrations.Contracts.Todoist" Version="0.0.2" />
     <PackageVersion Include="Integrations.Options" Version="0.0.1" />
     <PackageVersion Include="Integrations.Options.Generator" Version="0.0.1" />

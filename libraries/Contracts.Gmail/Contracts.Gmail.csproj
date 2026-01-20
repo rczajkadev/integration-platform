@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>Integrations.Contracts.Gmail</AssemblyName>
+    <RootNamespace>$(AssemblyName)</RootNamespace>
+    <Version>0.0.1</Version>
+  </PropertyGroup>
+
+</Project>

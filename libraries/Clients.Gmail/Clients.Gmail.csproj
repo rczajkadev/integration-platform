@@ -3,10 +3,11 @@
   <PropertyGroup>
     <AssemblyName>Integrations.Clients.Gmail</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Integrations.Contracts.Gmail" />
     <PackageReference Include="Microsoft.Extensions.Http" />
   </ItemGroup>
 

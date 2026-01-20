@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Integrations.Contracts.Gmail" />
     <PackageReference Include="Integrations.Options" />
     <PackageReference Include="Integrations.Options.Generator" />
     <PackageReference Include="MailKit" />

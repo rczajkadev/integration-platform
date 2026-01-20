@@ -1,3 +1,4 @@
+using Integrations.Contracts.Gmail;
 using Integrations.Gmail.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Worker;
@@ -6,12 +7,6 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 
 namespace Integrations.Gmail.Functions;
-
-internal sealed record SendEmailRequest(
-    string? To,
-    string Subject,
-    string Body,
-    bool IsHtml = false);
 
 internal sealed class SendEmail(
     EmailSenderService emailSender,
