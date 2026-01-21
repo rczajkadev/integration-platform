@@ -47,8 +47,7 @@ internal sealed class EnforceRecurringTaskRules(
 
         logger.LogInformation("Fetching tasks from Recurring project...");
 
-        var tasksInRecurringProject =
-            (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken))
+        var tasksInRecurringProject = (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken))
             .Where(task => string.IsNullOrWhiteSpace(task.ParentId))
             .ToList();
 

@@ -197,7 +197,7 @@ internal sealed class EnforceSubtaskRules(ITodoistApi todoist, ILogger<EnforceSu
         IEnumerable<string> parentLabels,
         IEnumerable<string> subtaskLabels)
     {
-        return [.. parentLabels
+        return [..parentLabels
             .Concat(subtaskLabels)
             .Distinct()
             .Where(label => !IsSubtaskLabel(label))];
