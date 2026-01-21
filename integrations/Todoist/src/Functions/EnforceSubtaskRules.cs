@@ -50,9 +50,9 @@ internal sealed class EnforceSubtaskRules(ITodoistApi todoist, ILogger<EnforceSu
 
         var updatePlan = BuildUpdatePlan(subtasks);
 
-        await ApplySubtaskUpdatesIfNeededAsync(subtasks, updatePlan.SubtaskUpdates, cancellationToken);
-        await UpdateParentLabelsIfNeededAsync(updatePlan.ParentLabelsUpdates, cancellationToken);
-        await RemoveSubtaskLabelFromNonSubtasksIfNeededAsync(nonSubtasksWithSubtaskLabel, cancellationToken);
+        await ApplySubtaskUpdatesAsync(subtasks, updatePlan.SubtaskUpdates, cancellationToken);
+        await UpdateParentLabelsAsync(updatePlan.ParentLabelsUpdates, cancellationToken);
+        await RemoveSubtaskLabelFromNonSubtasksAsync(nonSubtasksWithSubtaskLabel, cancellationToken);
     }
 
     private async Task<List<TodoistTask>> FetchSubtasksAsync(CancellationToken cancellationToken)
@@ -63,7 +63,7 @@ internal sealed class EnforceSubtaskRules(ITodoistApi todoist, ILogger<EnforceSu
 
     private async Task<List<TodoistTask>> FetchNonSubtasksWithSubtaskLabelAsync(CancellationToken cancellationToken)
     {
-        return (await todoist.GetTasksByFilterAsync(NonSubtaskWithSubtaskLabelFilter, cancellationToken)).ToList();
+        return [..await todoist.GetTasksByFilterAsync(NonSubtaskWithSubtaskLabelFilter, cancellationToken)];
     }
 
     private static SubtaskUpdatePlan BuildUpdatePlan(IReadOnlyCollection<TodoistTask> subtasks)
@@ -92,7 +92,7 @@ internal sealed class EnforceSubtaskRules(ITodoistApi todoist, ILogger<EnforceSu
         return new SubtaskUpdatePlan(subtaskUpdates, parentLabelsToAdd);
     }
 
-    private async Task ApplySubtaskUpdatesIfNeededAsync(
+    private async Task ApplySubtaskUpdatesAsync(
         IReadOnlyCollection<TodoistTask> subtasks,
         IReadOnlyDictionary<string, SubtaskUpdate> subtaskUpdates,
         CancellationToken cancellationToken)
@@ -115,7 +115,7 @@ internal sealed class EnforceSubtaskRules(ITodoistApi todoist, ILogger<EnforceSu
         logger.LogInformation("Updated {UpdatedCount} subtasks.", updatedCount);
     }
 
-    private async Task UpdateParentLabelsIfNeededAsync(
+    private async Task UpdateParentLabelsAsync(
         IReadOnlyDictionary<string, HashSet<string>> parentLabelsToAdd,
         CancellationToken cancellationToken)
     {
@@ -144,7 +144,7 @@ internal sealed class EnforceSubtaskRules(ITodoistApi todoist, ILogger<EnforceSu
         logger.LogInformation("Updated labels for {UpdatedCount} parents.", updatedCount);
     }
 
-    private async Task RemoveSubtaskLabelFromNonSubtasksIfNeededAsync(
+    private async Task RemoveSubtaskLabelFromNonSubtasksAsync(
         IReadOnlyCollection<TodoistTask> tasks,
         CancellationToken cancellationToken)
     {

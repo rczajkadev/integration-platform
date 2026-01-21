@@ -48,7 +48,9 @@ internal sealed class EnforceRecurringTaskRules(
         logger.LogInformation("Fetching tasks from Recurring project...");
 
         var tasksInRecurringProject =
-            (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken)).ToList();
+            (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken))
+            .Where(task => string.IsNullOrWhiteSpace(task.ParentId))
+            .ToList();
 
         if (tasksInRecurringProject.Count == 0)
         {
@@ -64,7 +66,7 @@ internal sealed class EnforceRecurringTaskRules(
             ApplyRulesToTask(task, labelsToUpdate, tasksWithNonRecurringDueDate);
         }
 
-        await ApplyLabelUpdatesIfNeededAsync(tasksInRecurringProject, labelsToUpdate, cancellationToken);
+        await ApplyLabelUpdatesAsync(tasksInRecurringProject, labelsToUpdate, cancellationToken);
         LogNumberOfTasksWithNonRecurringDueDates(tasksWithNonRecurringDueDate);
     }
 
@@ -91,7 +93,7 @@ internal sealed class EnforceRecurringTaskRules(
         EnsureRecurringTaskDoesNotHaveInactiveLabel(task, labels, labelsToUpdate);
     }
 
-    private async Task ApplyLabelUpdatesIfNeededAsync(
+    private async Task ApplyLabelUpdatesAsync(
         IReadOnlyCollection<TodoistTask> tasks,
         Dictionary<string, IReadOnlyCollection<string>> labelsToUpdate,
         CancellationToken cancellationToken)
