@@ -7,6 +7,7 @@ param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
 param sharedServiceBusNamespaceName string
+param sharedAppInsightsName string
 param timeZone string
 param location string = resourceGroup().location
 
@@ -31,6 +32,10 @@ resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2024-01-01' existi
 resource serviceBusAuthorizationRules 'Microsoft.ServiceBus/namespaces/AuthorizationRules@2024-01-01' existing = {
   name: 'RootManageSharedAccessKey'
   parent: serviceBusNamespace
+}
+
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: sharedAppInsightsName
 }
 
 resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
@@ -73,6 +78,10 @@ resource functionApp 'Microsoft.Web/sites@2024-11-01' = {
         {
           name: 'ServiceBusConnectionString'
           value: serviceBusAuthorizationRules.listKeys().primaryConnectionString
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: 'InstrumentationKey=${applicationInsights.properties.InstrumentationKey}'
         }
       ], customAppSettings)
     }

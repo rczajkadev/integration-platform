@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using Integrations.Options;
+using Integrations.Telemetry;
 using Integrations.Todoist.Options;
 using Integrations.Todoist.TodoistClient;
 using Microsoft.Azure.Functions.Worker.Builder;
@@ -9,6 +10,7 @@ using Refit;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
+builder.ConfigureApplicationInsightsTelemetry();
 builder.ConfigureFunctionsWebApplication();
 
 var options = builder.GetOptions<Options>();

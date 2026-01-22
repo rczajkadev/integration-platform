@@ -4,6 +4,7 @@ param sharedAppServicePlanName string
 param sharedStorageAccountName string
 param sharedKeyVaultName string
 param sharedServiceBusNamespaceName string
+param sharedAppInsightsName string
 param driveWorkJsonCredentialsSecretName string
 param drivePersonalJsonCredentialsSecretName string
 param googleApplicationName string
@@ -125,6 +126,7 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
     sharedStorageAccountName: sharedStorageAccountName
     sharedKeyVaultName: sharedKeyVaultName
     sharedServiceBusNamespaceName: sharedServiceBusNamespaceName
+    sharedAppInsightsName: sharedAppInsightsName
     timeZone: timeZone
   }
 }
