@@ -9,10 +9,10 @@ param driveWorkJsonCredentialsSecretName string
 param drivePersonalJsonCredentialsSecretName string
 param googleApplicationName string
 param concurrentDownloads int
-param accountingDocumentationBackupCronSchedule string
-param accountingDocumentationExportFolderId string
-param accountingDocumentationBackupFolderId string
-param accountingDocumentationBackupFileNamePrefix string
+param accountingRecordsBackupCronSchedule string
+param accountingRecordsExportFolderId string
+param accountingRecordsBackupFolderId string
+param accountingRecordsBackupFileNamePrefix string
 param henrySavesBackupCronSchedule string
 param henrySavesExportFolderId string
 param henrySavesBackupFolderId string
@@ -34,8 +34,8 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
         value: keyVault.properties.vaultUri
       }
       {
-        name: 'AccountingDocumentationBackupCronSchedule'
-        value: accountingDocumentationBackupCronSchedule
+        name: 'AccountingRecordsBackupCronSchedule'
+        value: accountingRecordsBackupCronSchedule
       }
       {
         name: 'HenrySavesBackupCronSchedule'
@@ -83,7 +83,7 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
       }
       {
         name: 'Backup__0__BackupType'
-        value: 'AccountingDocumentation'
+        value: 'AccountingRecords'
       }
       {
         name: 'Backup__0__AccountType'
@@ -91,15 +91,15 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
       }
       {
         name: 'Backup__0__ExportFolderId'
-        value: accountingDocumentationExportFolderId
+        value: accountingRecordsExportFolderId
       }
       {
         name: 'Backup__0__BackupFolderId'
-        value: accountingDocumentationBackupFolderId
+        value: accountingRecordsBackupFolderId
       }
       {
         name: 'Backup__0__FileNamePrefix'
-        value: accountingDocumentationBackupFileNamePrefix
+        value: accountingRecordsBackupFileNamePrefix
       }
       {
         name: 'Backup__1__BackupType'

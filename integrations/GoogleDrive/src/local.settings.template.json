@@ -8,7 +8,7 @@
     "ServiceBusConnectionString": "",
     "KeyVaultUri": "",
     "NumberOfTasksServiceBusQueueName": "",
-    "AccountingDocumentationBackupCronSchedule": "0 0 2 1 * *",
+    "AccountingRecordsBackupCronSchedule": "0 0 2 1 * *",
     "HenrySavesBackupCronSchedule": "0 0 2 */7 * *",
 
     "GoogleDrive__0__AccountType": "Work",
@@ -23,11 +23,11 @@
     "GoogleDrive__1__KeyVaultSecretName": "",
     "GoogleDrive__1__ConcurrentDownloads": 100,
 
-    "Backup__0__BackupType": "AccountingDocumentation",
+    "Backup__0__BackupType": "AccountingRecords",
     "Backup__0__AccountType": "Work",
     "Backup__0__ExportFolderId": "",
     "Backup__0__BackupFolderId": "",
-    "Backup__0__FileNamePrefix": "accounting-documentation-",
+    "Backup__0__FileNamePrefix": "accounting-records-",
 
     "Backup__1__BackupType": "HenrySaves",
     "Backup__1__AccountType": "Personal",
