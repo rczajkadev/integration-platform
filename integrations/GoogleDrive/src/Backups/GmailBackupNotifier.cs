@@ -31,7 +31,7 @@ internal sealed class GmailBackupNotifier(
     {
         if (!_options.Enabled) return Task.CompletedTask;
 
-        var subject = $"Backup {backupType} failed";
+        var subject = $"[Integration Platform] Backup {backupType} failed";
         var body = $"Backup '{backupType}' failed at {DateTimeOffset.UtcNow:O}.{Environment.NewLine}Error: {exception.GetType().Name}: {exception.Message}";
         return SendAsync(subject, body, cancellationToken);
     }
