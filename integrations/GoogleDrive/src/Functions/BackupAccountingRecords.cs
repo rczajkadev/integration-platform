@@ -6,6 +6,7 @@ namespace Integrations.GoogleDrive.Functions;
 
 internal sealed class BackupAccountingRecords(
     BackupHandler handler,
+    IBackupNotifier notifier,
     ILogger<BackupAccountingRecords> logger)
 {
     [Function(nameof(BackupAccountingRecords))]
@@ -23,11 +24,13 @@ internal sealed class BackupAccountingRecords(
 
         try
         {
-            await handler.HandleAsync(BackupType.AccountingRecords, cancellationToken);
+            var filename = await handler.HandleAsync(BackupType.AccountingRecords, cancellationToken);
+            await notifier.NotifySuccessAsync(BackupType.AccountingRecords, filename, cancellationToken);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error while creating backups.");
+            await notifier.NotifyFailureAsync(BackupType.AccountingRecords, ex, cancellationToken);
             throw;
         }
     }

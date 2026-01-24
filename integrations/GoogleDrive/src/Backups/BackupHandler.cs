@@ -11,7 +11,7 @@ internal sealed class BackupHandler(
     SecretClient secretClient,
     ILogger<BackupHandler> logger)
 {
-    public async Task HandleAsync(BackupType backupType, CancellationToken cancellationToken)
+    public async Task<string> HandleAsync(BackupType backupType, CancellationToken cancellationToken)
     {
         var (backupOptions, driveOptions) = optionsResolver.Resolve(backupType);
         using var client = await DriveClient.CreateAsync(driveOptions, secretClient, cancellationToken);
@@ -37,5 +37,7 @@ internal sealed class BackupHandler(
         await client.UploadFileAsync(filename, backupOptions.BackupFolderId, zipData, contentType, cancellationToken);
 
         logger.LogInformation("Backup zip file '{Filename}' uploaded to storage.", filename);
+
+        return filename;
     }
 }
