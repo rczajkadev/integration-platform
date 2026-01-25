@@ -3,12 +3,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Integrations.Todoist.Rules.Subtasks;
 
+/// <summary>
+/// Enforces that subtasks have only the subtask label and propagates any other
+/// labels from subtasks to their parent tasks.
+/// </summary>
 internal sealed class SubtaskLabelRule(
     ITodoistApi todoist,
     ILogger<SubtaskLabelRule> logger) : ITodoistRule
 {
     private const string SubtaskFilter = "subtask";
 
+    /// <inheritdoc />
+    /// <seealso cref="SubtaskLabelRule" />
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching subtasks for label rule...");

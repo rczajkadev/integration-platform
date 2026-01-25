@@ -3,12 +3,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Integrations.Todoist.Rules.Subtasks;
 
+/// <summary>
+/// Removes the subtask label from tasks that are not subtasks but have it assigned.
+/// </summary>
 internal sealed class NonSubtaskLabelRule(
     ITodoistApi todoist,
     ILogger<NonSubtaskLabelRule> logger) : ITodoistRule
 {
     private const string NonSubtaskWithSubtaskLabelFilter = "!subtask & @subtask";
 
+    /// <inheritdoc />
+    /// <seealso cref="NonSubtaskLabelRule" />
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching non subtasks but with subtask label...");

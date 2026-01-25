@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Integrations.Todoist.Rules.Subtasks;
 
+/// <summary>
+/// Removes due dates from subtasks so that only parent tasks define scheduling.
+/// </summary>
 internal sealed class SubtaskDueDateRule(
     ITodoistApi todoist,
     ILogger<SubtaskDueDateRule> logger) : ITodoistRule
@@ -10,6 +13,8 @@ internal sealed class SubtaskDueDateRule(
     private const string RemoveDueDateValue = "no due date";
     private const string SubtaskFilter = "subtask";
 
+    /// <inheritdoc />
+    /// <seealso cref="SubtaskDueDateRule" />
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching subtasks for due date rule...");

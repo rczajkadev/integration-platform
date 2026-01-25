@@ -5,6 +5,11 @@ using Microsoft.Extensions.Options;
 
 namespace Integrations.Todoist.Rules.RecurringTasks;
 
+/// <summary>
+/// Ensures tasks in the Recurring project follow inactive label rules:
+/// tasks without a due date get only the inactive label, and recurring tasks
+/// never keep the inactive label.
+/// </summary>
 internal sealed class RecurringTaskInactiveLabelRule(
     ITodoistApi todoist,
     IOptions<TodoistProjectIdsOptions> options,
@@ -12,6 +17,8 @@ internal sealed class RecurringTaskInactiveLabelRule(
 {
     private readonly string _recurringProjectId = options.Value.Recurring;
 
+    /// <inheritdoc />
+    /// <seealso cref="RecurringTaskInactiveLabelRule" />
     public async Task ExecuteAsync(CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(_recurringProjectId))
