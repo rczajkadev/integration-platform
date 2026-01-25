@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using Integrations.Options;
 using Integrations.Telemetry;
 using Integrations.Todoist.Options;
+using Integrations.Todoist.Rules;
 using Integrations.Todoist.TodoistClient;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,8 @@ builder.ConfigureFunctionsWebApplication();
 
 var options = builder.GetOptions<Options>();
 builder.Services.Configure<TodoistProjectIdsOptions>(options.TodoistProjectIds);
+
+builder.Services.AddTodoistRules();
 
 builder.Services
     .AddRefitClient<ITodoistApi>(new RefitSettings
