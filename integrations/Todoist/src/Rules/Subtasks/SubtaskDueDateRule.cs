@@ -15,7 +15,7 @@ internal sealed class SubtaskDueDateRule(
 
     /// <inheritdoc />
     /// <seealso cref="SubtaskDueDateRule" />
-    public async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching subtasks for due date rule...");
         var subtasks = await FetchSubtasksAsync(cancellationToken);

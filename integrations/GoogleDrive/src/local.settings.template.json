@@ -11,10 +11,10 @@
     "AccountingRecordsBackupCronSchedule": "0 0 2 1 * *",
     "HenrySavesBackupCronSchedule": "0 0 2 */7 * *",
 
-    "BackupNotifications__Enabled": "false",
-    "BackupNotifications__GmailBaseUrl": "",
-    "BackupNotifications__GmailFunctionKey": "",
-    "BackupNotifications__To": "",
+    "Notifications__Enabled": "false",
+    "Notifications__BaseUrl": "",
+    "Notifications__FunctionKey": "",
+    "Notifications__To": "",
 
     "GoogleDrive__0__AccountType": "Work",
     "GoogleDrive__0__ApplicationName": "Integration Platform",

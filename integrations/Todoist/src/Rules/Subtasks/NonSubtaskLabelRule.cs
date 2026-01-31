@@ -14,7 +14,7 @@ internal sealed class NonSubtaskLabelRule(
 
     /// <inheritdoc />
     /// <seealso cref="NonSubtaskLabelRule" />
-    public async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching non subtasks but with subtask label...");
         var tasks = await FetchNonSubtasksWithSubtaskLabelAsync(cancellationToken);

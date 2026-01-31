@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using Integrations.Notifications;
 using Integrations.Options;
 using Integrations.Telemetry;
 using Integrations.Todoist.Options;
@@ -18,6 +19,9 @@ var options = builder.GetOptions<Options>();
 builder.Services.Configure<TodoistProjectIdsOptions>(options.TodoistProjectIds);
 
 builder.Services.AddTodoistRules();
+builder.Services.AddNotifications(
+    builder.Configuration,
+    optionsSectionName: "Notifications");
 
 builder.Services
     .AddRefitClient<ITodoistApi>(new RefitSettings

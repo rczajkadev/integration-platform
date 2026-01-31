@@ -6,8 +6,6 @@ internal static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddTodoistRules(this IServiceCollection services)
     {
-        ArgumentNullException.ThrowIfNull(services);
-
         var ruleType = typeof(ITodoistRule);
 
         var ruleTypes = ruleType.Assembly.GetTypes()

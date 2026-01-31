@@ -19,11 +19,12 @@ internal sealed class RecurringTaskInactiveLabelRule(
 
     /// <inheritdoc />
     /// <seealso cref="RecurringTaskInactiveLabelRule" />
-    public async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(_recurringProjectId))
         {
             logger.LogWarning("Recurring project ID is not configured.");
+            context.AddMessage("Recurring project ID is not configured.");
             return;
         }
 
@@ -44,14 +45,14 @@ internal sealed class RecurringTaskInactiveLabelRule(
 
         foreach (var task in tasksInRecurringProject)
         {
-            ApplyRulesToTask(task, labelsToUpdate, tasksWithNonRecurringDueDate);
+            ApplyRules(task, labelsToUpdate, tasksWithNonRecurringDueDate);
         }
 
-        await ApplyLabelUpdatesAsync(tasksInRecurringProject, labelsToUpdate, cancellationToken);
-        LogNumberOfTasksWithNonRecurringDueDates(tasksWithNonRecurringDueDate);
+        await SaveChangesAsync(tasksInRecurringProject, labelsToUpdate, cancellationToken);
+        ReportNonRecurringDueDates(tasksWithNonRecurringDueDate, context);
     }
 
-    private static void ApplyRulesToTask(
+    private static void ApplyRules(
         TodoistTask task,
         IDictionary<string, IReadOnlyCollection<string>> labelsToUpdate,
         List<TodoistTask> tasksWithNonRecurringDueDate)
@@ -61,7 +62,7 @@ internal sealed class RecurringTaskInactiveLabelRule(
 
         if (due is null)
         {
-            EnsureTaskHasOnlyInactiveLabel(task, labels, labelsToUpdate);
+            ApplyInactiveLabelOnly(task, labels, labelsToUpdate);
             return;
         }
 
@@ -71,10 +72,10 @@ internal sealed class RecurringTaskInactiveLabelRule(
             return;
         }
 
-        EnsureRecurringTaskDoesNotHaveInactiveLabel(task, labels, labelsToUpdate);
+        RemoveInactiveLabel(task, labels, labelsToUpdate);
     }
 
-    private async Task ApplyLabelUpdatesAsync(
+    private async Task SaveChangesAsync(
         IReadOnlyCollection<TodoistTask> tasks,
         Dictionary<string, IReadOnlyCollection<string>> labelsToUpdate,
         CancellationToken cancellationToken)
@@ -100,17 +101,16 @@ internal sealed class RecurringTaskInactiveLabelRule(
         return labels as IReadOnlyCollection<string> ?? [..labels];
     }
 
-    private static void EnsureTaskHasOnlyInactiveLabel(
+    private static void ApplyInactiveLabelOnly(
         TodoistTask task,
         IReadOnlyCollection<string> labels,
         IDictionary<string, IReadOnlyCollection<string>> labelsToUpdate)
     {
         if (HasOnlyInactiveLabel(labels)) return;
-
         labelsToUpdate[task.Id] = [Constants.InactiveLabel];
     }
 
-    private static void EnsureRecurringTaskDoesNotHaveInactiveLabel(
+    private static void RemoveInactiveLabel(
         TodoistTask task,
         IReadOnlyCollection<string> labels,
         IDictionary<string, IReadOnlyCollection<string>> labelsToUpdate)
@@ -139,12 +139,15 @@ internal sealed class RecurringTaskInactiveLabelRule(
         return string.Equals(label, Constants.InactiveLabel, StringComparison.OrdinalIgnoreCase);
     }
 
-    private void LogNumberOfTasksWithNonRecurringDueDates(List<TodoistTask> tasksWithNonRecurringDueDate)
+    private void ReportNonRecurringDueDates(
+        List<TodoistTask> tasksWithNonRecurringDueDate,
+        TodoistRuleContext context)
     {
-        if (tasksWithNonRecurringDueDate.Count == 0) return;
+        var count  = tasksWithNonRecurringDueDate.Count;
 
-        logger.LogWarning(
-            "Found {TaskCount} tasks with non-recurring due dates in Recurring project.",
-            tasksWithNonRecurringDueDate.Count);
+        if (count < 1) return;
+
+        logger.LogWarning("Found {TaskCount} tasks with non-recurring due dates in Recurring project.", count);
+        context.AddMessage($"Found {count} tasks with non-recurring due dates in Recurring project.");
     }
 }

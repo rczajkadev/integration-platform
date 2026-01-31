@@ -1,24 +1,17 @@
-using Integrations.Clients.Gmail;
-using Integrations.GoogleDrive.Options;
+using Integrations.Notifications;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Integrations.GoogleDrive.Backups;
 
 internal sealed class GmailBackupNotifier(
-    GmailClient gmailClient,
-    IOptions<BackupNotificationsOptions> options,
+    INotificationSender notificationSender,
     ILogger<GmailBackupNotifier> logger) : IBackupNotifier
 {
-    private readonly BackupNotificationsOptions _options = options.Value;
-
     public Task NotifySuccessAsync(
         BackupType backupType,
         string filename,
         CancellationToken cancellationToken)
     {
-        if (!_options.Enabled) return Task.CompletedTask;
-
         var subject = $"[Integration Platform] Backup {backupType} completed";
         var body = $"Backup '{backupType}' completed at {DateTimeOffset.UtcNow:O}.{Environment.NewLine}File: {filename}";
         return SendAsync(subject, body, cancellationToken);
@@ -29,8 +22,6 @@ internal sealed class GmailBackupNotifier(
         Exception exception,
         CancellationToken cancellationToken)
     {
-        if (!_options.Enabled) return Task.CompletedTask;
-
         var subject = $"[Integration Platform] Backup {backupType} failed";
         var body = $"Backup '{backupType}' failed at {DateTimeOffset.UtcNow:O}.{Environment.NewLine}Error: {exception.GetType().Name}: {exception.Message}";
         return SendAsync(subject, body, cancellationToken);
@@ -40,12 +31,7 @@ internal sealed class GmailBackupNotifier(
     {
         try
         {
-            await gmailClient.SendEmailAsync(
-                _options.To,
-                subject,
-                body,
-                isHtml: false,
-                cancellationToken);
+            await notificationSender.SendAsync(subject, body, cancellationToken);
         }
         catch (Exception ex)
         {

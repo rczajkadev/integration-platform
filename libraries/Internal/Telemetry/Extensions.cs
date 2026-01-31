@@ -8,7 +8,8 @@ namespace Integrations.Telemetry;
 
 public static class Extensions
 {
-    public static IHostApplicationBuilder ConfigureApplicationInsightsTelemetry(this IHostApplicationBuilder builder)
+    public static IHostApplicationBuilder ConfigureApplicationInsightsTelemetry(
+        this IHostApplicationBuilder builder)
     {
         builder.Services
             .AddApplicationInsightsTelemetryWorkerService()

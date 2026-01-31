@@ -12,6 +12,7 @@
     <Project Path="libraries/Public/Contracts.Gmail/Contracts.Gmail.csproj" />
   </Folder>
   <Folder Name="/libraries/Internal/">
+    <Project Path="libraries/Internal/Notifications/Notifications.csproj" />
     <Project Path="libraries/Internal/Options/Options.csproj" />
     <Project Path="libraries/Internal/Options.Generator/Options.Generator.csproj" />
     <Project Path="libraries/Internal/Telemetry/Telemetry.csproj" />

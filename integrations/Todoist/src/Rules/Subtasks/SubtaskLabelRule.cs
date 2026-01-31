@@ -15,7 +15,7 @@ internal sealed class SubtaskLabelRule(
 
     /// <inheritdoc />
     /// <seealso cref="SubtaskLabelRule" />
-    public async Task ExecuteAsync(CancellationToken cancellationToken)
+    public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching subtasks for label rule...");
         var subtasks = await FetchSubtasksAsync(cancellationToken);

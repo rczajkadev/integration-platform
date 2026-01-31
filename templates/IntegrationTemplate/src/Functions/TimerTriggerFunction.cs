@@ -16,7 +16,7 @@ internal sealed class TimerTriggerFunction(ILogger<TimerTriggerFunction> logger)
 #if DEBUG
             , RunOnStartup = true
 #endif
-            )] TimerInfo _,
+        )] TimerInfo _,
         CancellationToken cancellationToken)
     {
         logger.LogInformation("Timer trigger function executed at: {DateTime}", DateTime.Now);

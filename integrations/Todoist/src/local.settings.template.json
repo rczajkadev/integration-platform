@@ -10,6 +10,10 @@
     "TodoistApiKey": "",
     "EnforceSubtaskRulesSchedule": "0 0 2 * * *",
     "EnforceRecurringTaskRulesSchedule": "0 15 2 * * *",
-    "TodoistProjectIds__Recurring": ""
+    "TodoistProjectIds__Recurring": "",
+    "Notifications__Enabled": "false",
+    "Notifications__BaseUrl": "",
+    "Notifications__FunctionKey": "",
+    "Notifications__To": ""
   }
 }

@@ -8,6 +8,7 @@
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\libraries\Internal\Options.Generator\Options.Generator.csproj"
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\libraries\Internal\Notifications\Notifications.csproj" />
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\libraries\Internal\Telemetry\Telemetry.csproj" />
   </ItemGroup>
 

@@ -5,9 +5,9 @@ param sharedStorageAccountName string
 param sharedKeyVaultName string
 param sharedServiceBusNamespaceName string
 param sharedAppInsightsName string
-param backupNotificationsEnabled bool
-param backupNotificationsGmailBaseUrl string
-param backupNotificationsSendEmailFunctionKeySecretName string
+param notificationsEnabled bool
+param notificationsBaseUrl string
+param notificationsFunctionKeySecretName string
 param driveWorkJsonCredentialsSecretName string
 param drivePersonalJsonCredentialsSecretName string
 param googleApplicationName string
@@ -45,16 +45,16 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
         value: henrySavesBackupCronSchedule
       }
       {
-        name: 'BackupNotifications__Enabled'
-        value: backupNotificationsEnabled
+        name: 'Notifications__Enabled'
+        value: notificationsEnabled
       }
       {
-        name: 'BackupNotifications__GmailBaseUrl'
-        value: backupNotificationsGmailBaseUrl
+        name: 'Notifications__BaseUrl'
+        value: notificationsBaseUrl
       }
       {
-        name: 'BackupNotifications__GmailFunctionKey'
-        value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${backupNotificationsSendEmailFunctionKeySecretName})'
+        name: 'Notifications__FunctionKey'
+        value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${notificationsFunctionKeySecretName})'
       }
       {
         name: 'GoogleDrive__0__AccountType'
