@@ -10,8 +10,7 @@ param notificationsBaseUrl string
 param notificationsFunctionKeySecretName string
 param todoistApiKeySecretName string
 param todoistApiBaseUrl string
-param enforceSubtaskRulesSchedule string
-param enforceRecurringTaskRulesSchedule string
+param enforceRulesSchedule string
 param todoistRecurringProjectId string
 param timeZone string
 
@@ -42,12 +41,8 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
         value: '@Microsoft.KeyVault(VaultName=${sharedKeyVaultName};SecretName=${notificationsFunctionKeySecretName})'
       }
       {
-        name: 'EnforceSubtaskRulesSchedule'
-        value: enforceSubtaskRulesSchedule
-      }
-      {
-        name: 'EnforceRecurringTaskRulesSchedule'
-        value: enforceRecurringTaskRulesSchedule
+        name: 'EnforceRulesSchedule'
+        value: enforceRulesSchedule
       }
       {
         name: 'TodoistProjectIds__Recurring'

@@ -11,11 +11,12 @@ internal static class ServiceCollectionExtensions
         var ruleTypes = ruleType.Assembly.GetTypes()
             .Where(type =>
                 type is { IsAbstract: false, IsInterface: false } &&
-                ruleType.IsAssignableFrom(type));
+                ruleType.IsAssignableFrom(type))
+            .OrderBy(type => type.FullName);
 
         foreach (var type in ruleTypes)
         {
-            services.AddScoped(type);
+            services.AddScoped(ruleType, type);
         }
 
         return services;

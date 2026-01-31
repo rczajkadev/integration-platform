@@ -1,20 +1,19 @@
 using Integrations.Notifications;
 using Integrations.Todoist.Rules;
-using Integrations.Todoist.Rules.RecurringTasks;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 
 namespace Integrations.Todoist.Functions;
 
-internal sealed class EnforceRecurringTaskRules(
-    RecurringTaskInactiveLabelRule rule,
+internal sealed class EnforceRules(
+    IEnumerable<ITodoistRule> rules,
     INotificationSender notificationSender,
-    ILogger<EnforceRecurringTaskRules> logger)
+    ILogger<EnforceRules> logger)
 {
-    [Function(nameof(EnforceRecurringTaskRules))]
+    [Function(nameof(EnforceRules))]
     public async Task RunAsync(
         [TimerTrigger(
-            "%EnforceRecurringTaskRulesSchedule%",
+            "%EnforceRulesSchedule%",
             UseMonitor = false
 #if DEBUG
             , RunOnStartup = true
@@ -27,12 +26,15 @@ internal sealed class EnforceRecurringTaskRules(
         try
         {
             var context = new TodoistRuleContext();
-            await rule.ExecuteAsync(context, cancellationToken);
+
+            foreach (var rule in rules)
+                await rule.ExecuteAsync(context, cancellationToken);
+
             await TrySendNotificationsAsync(context, cancellationToken);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error while enforcing recurring task rules.");
+            logger.LogError(ex, "Error while enforcing Todoist rules.");
             throw;
         }
     }
@@ -52,7 +54,7 @@ internal sealed class EnforceRecurringTaskRules(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error while sending recurring task rules notification.");
+            logger.LogError(ex, "Error while sending Todoist rules notification.");
         }
     }
 }
