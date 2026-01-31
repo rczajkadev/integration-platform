@@ -1,4 +1,4 @@
-﻿namespace Integrations.Todoist.TodoistClient;
+namespace Integrations.Todoist.TodoistClient;
 
 internal static class Extensions
 {

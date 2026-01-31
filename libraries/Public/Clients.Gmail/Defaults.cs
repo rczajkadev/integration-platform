@@ -1,4 +1,4 @@
-﻿namespace Integrations.Clients.Gmail;
+namespace Integrations.Clients.Gmail;
 
 internal static class Defaults
 {

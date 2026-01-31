@@ -1,4 +1,4 @@
-﻿namespace Integrations.GoogleDrive.Drive;
+namespace Integrations.GoogleDrive.Drive;
 
 internal sealed record File(string Path, byte[] Content);
 

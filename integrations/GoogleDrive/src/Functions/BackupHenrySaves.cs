@@ -1,4 +1,4 @@
-﻿using Integrations.GoogleDrive.Backups;
+using Integrations.GoogleDrive.Backups;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 

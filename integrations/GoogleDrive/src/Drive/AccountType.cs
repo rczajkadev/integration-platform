@@ -1,3 +1,3 @@
-﻿namespace Integrations.GoogleDrive.Drive;
+namespace Integrations.GoogleDrive.Drive;
 
 internal enum AccountType { Work, Personal }

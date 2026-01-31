@@ -1,4 +1,4 @@
-﻿using Integrations.GoogleDrive.Options;
+using Integrations.GoogleDrive.Options;
 using Microsoft.Extensions.Options;
 
 namespace Integrations.GoogleDrive.Backups;

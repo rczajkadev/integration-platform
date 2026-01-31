@@ -98,7 +98,7 @@ internal sealed class RecurringTaskInactiveLabelRule(
 
     private static IReadOnlyCollection<string> GetLabelsSnapshot(IEnumerable<string> labels)
     {
-        return labels as IReadOnlyCollection<string> ?? [..labels];
+        return labels as IReadOnlyCollection<string> ?? [.. labels];
     }
 
     private static void ApplyInactiveLabelOnly(
@@ -143,7 +143,7 @@ internal sealed class RecurringTaskInactiveLabelRule(
         List<TodoistTask> tasksWithNonRecurringDueDate,
         TodoistRuleContext context)
     {
-        var count  = tasksWithNonRecurringDueDate.Count;
+        var count = tasksWithNonRecurringDueDate.Count;
 
         if (count < 1) return;
 

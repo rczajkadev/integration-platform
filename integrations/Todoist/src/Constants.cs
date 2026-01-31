@@ -1,4 +1,4 @@
-﻿namespace Integrations.Todoist;
+namespace Integrations.Todoist;
 
 internal static class Constants
 {

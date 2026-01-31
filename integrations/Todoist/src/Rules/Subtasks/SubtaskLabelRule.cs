@@ -133,7 +133,7 @@ internal sealed class SubtaskLabelRule(
 
     private static IReadOnlyCollection<string> GetLabelsSnapshot(IEnumerable<string> labels)
     {
-        return labels as IReadOnlyCollection<string> ?? [..labels];
+        return labels as IReadOnlyCollection<string> ?? [.. labels];
     }
 
     private static bool HasOnlySubtaskLabel(IReadOnlyCollection<string> labels)
