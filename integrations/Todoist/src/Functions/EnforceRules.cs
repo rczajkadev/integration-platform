@@ -35,7 +35,7 @@ internal sealed class EnforceRules(
         catch (Exception ex)
         {
             logger.LogError(ex, "Error while enforcing Todoist rules.");
-            await SendErrorNotificationsAsync(cancellationToken);
+            await SendExceptionNotificationsAsync(ex, cancellationToken);
             throw;
         }
     }
@@ -44,15 +44,14 @@ internal sealed class EnforceRules(
     {
         if (!context.HasMessages) return;
 
-        const string subject = "[Integration Platform] Todoist rules: manual review required";
+        const string subject = "[Integration Platform] Todoist - rules require manual review";
         var body = string.Join(Environment.NewLine, context.Messages);
         await notificationSender.SendAsync(subject, body, cancellationToken);
     }
 
-    private async Task SendErrorNotificationsAsync(CancellationToken cancellationToken)
+    private async Task SendExceptionNotificationsAsync(Exception exception, CancellationToken cancellationToken)
     {
-        const string subject = "[Integration Platform] Error";
-        const string body = $"Error while enforcing Todoist rules.";
-        await notificationSender.SendAsync(subject, body, cancellationToken);
+        const string subject = "Todoist - enforcing rules error.";
+        await notificationSender.SendExceptionAsync(subject, exception, cancellationToken);
     }
 }
