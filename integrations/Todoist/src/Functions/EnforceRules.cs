@@ -44,7 +44,7 @@ internal sealed class EnforceRules(
     {
         if (!context.HasMessages) return;
 
-        const string subject = "[Integration Platform] Todoist - rules require manual review";
+        const string subject = "Todoist - rules require manual review";
         var body = string.Join(Environment.NewLine, context.Messages);
         await notificationSender.SendAsync(subject, body, cancellationToken);
     }
