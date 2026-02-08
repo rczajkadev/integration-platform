@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "WEBSITE_TIME_ZONE": "Central European Standard Time",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
+    "ServiceBusConnectionString": "",
+    "WeightTrackerApiBaseUrl": "https://example.com",
+    "WeightTrackerApiKey": "",
+    "CheckStatusSchedule": "0 0 18 * * *",
+    "Notifications__Enabled": "false",
+    "Notifications__BaseUrl": "",
+    "Notifications__FunctionKey": "",
+    "Notifications__To": ""
+  }
+}

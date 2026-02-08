@@ -1,0 +1,16 @@
+using './main.bicep'
+
+param projectName = 'int'
+param integrationName = 'weighttracker'
+param sharedAppServicePlanName = 'asp-int-shared'
+param sharedStorageAccountName = 'stintsharedg7lv'
+param sharedKeyVaultName = 'kv-int-shared-k4h7'
+param sharedServiceBusNamespaceName = 'sbns-int-shared'
+param sharedAppInsightsName = 'appi-int-shared'
+param notificationsEnabled = true
+param notificationsBaseUrl = 'https://func-int-gmail.azurewebsites.net/'
+param notificationsFunctionKeySecretName = 'Common-SendEmailFunctionKey'
+param weightTrackerApiBaseUrl = 'https://app-weighttracker-prod.azurewebsites.net'
+param weightTrackerApiKeySecretName = 'WeightTracker-WeightTrackerApiKey'
+param timeZone = 'Central European Standard Time'
+param checkStatusSchedule = '0 0 18 * * *'

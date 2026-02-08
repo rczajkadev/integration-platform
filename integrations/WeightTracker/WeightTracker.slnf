@@ -1,0 +1,8 @@
+{
+  "solution": {
+    "path": "..\\..\\integration-platform.slnx",
+    "projects": [
+      "integrations\\WeightTracker\\src\\WeightTracker.csproj"
+    ]
+  }
+}

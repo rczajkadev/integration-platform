@@ -1,0 +1,27 @@
+name: WeightTracker - Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'integrations/WeightTracker/infra/**'
+      - 'integrations/WeightTracker/src/**'
+      - 'Directory.*.props'
+      - 'global.json'
+
+  workflow_dispatch:
+
+concurrency:
+  group: integration-platform-deploy
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    name: R05 Build and Deploy Integration
+    uses: ./.github/workflows/_R05.deploy-integration.yml
+    with:
+      infra-directory: ./integrations/WeightTracker/infra
+      integration-directory: ./integrations/WeightTracker
+    secrets:
+      azure-credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      azure-resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
