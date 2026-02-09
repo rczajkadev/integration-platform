@@ -1,9 +1,5 @@
-using System.Text.Json.Serialization;
-
 namespace Integrations.WeightTracker.WeightTrackerClient;
 
-internal sealed record WeightsSummaryResponse(
-    [property: JsonPropertyName("today")] WeightsSummaryToday Today);
+internal sealed record WeightsSummaryResponse(WeightsSummaryToday Today);
 
-internal sealed record WeightsSummaryToday(
-    [property: JsonPropertyName("hasEntry")] bool HasEntry);
+internal sealed record WeightsSummaryToday(bool HasEntry);
