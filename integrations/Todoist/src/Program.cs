@@ -8,6 +8,8 @@ using Integrations.Todoist.TodoistClient;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Refit;
 
 var builder = FunctionsApplication.CreateBuilder(args);
@@ -26,7 +28,14 @@ builder.Services.AddNotifications(
 builder.Services
     .AddRefitClient<ITodoistApi>(new RefitSettings
     {
-        ContentSerializer = new NewtonsoftJsonContentSerializer()
+        ContentSerializer = new NewtonsoftJsonContentSerializer(
+            new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new SnakeCaseNamingStrategy()
+                }
+            })
     })
     .ConfigureHttpClient(client =>
     {

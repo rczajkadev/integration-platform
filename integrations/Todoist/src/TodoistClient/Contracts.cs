@@ -9,13 +9,7 @@ internal interface ITodoistItem
 
 internal sealed record TodoistResponse<T>(
     IEnumerable<T> Results,
-    [JsonProperty(PropertyName = "next_cursor")] string NextCursor) where T : ITodoistItem;
-
-internal sealed record TodoistProject(
-    string Id,
-    [JsonProperty(PropertyName = "parent_id")] string ParentId,
-    string Name,
-    string Description) : ITodoistItem;
+    string NextCursor) where T : ITodoistItem;
 
 internal sealed record TodoistLabel(
     string Id,
@@ -23,16 +17,16 @@ internal sealed record TodoistLabel(
 
 internal sealed record TodoistTask(
     string Id,
-    [JsonProperty(PropertyName = "project_id")] string ProjectId,
-    [JsonProperty(PropertyName = "parent_id")] string ParentId,
+    string ProjectId,
+    string ParentId,
     IEnumerable<string> Labels,
     TodoistTaskDue? Due,
     string Content,
     string Description) : ITodoistItem;
 
 internal sealed record TodoistTaskDue(
-    [JsonProperty(PropertyName = "is_recurring")] bool IsRecurring,
-    [JsonProperty(PropertyName = "string")] string? String,
-    [JsonProperty(PropertyName = "date")] string? Date,
+    bool IsRecurring,
+    string? String,
+    string? Date,
     [JsonProperty(PropertyName = "datetime")] string? DateTime,
-    [JsonProperty(PropertyName = "timezone")] string? Timezone);
+    string? Timezone);
