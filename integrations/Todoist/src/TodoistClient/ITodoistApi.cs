@@ -4,10 +4,6 @@ namespace Integrations.Todoist.TodoistClient;
 
 internal interface ITodoistApi
 {
-    [Get("/projects?limit=200")]
-    Task<TodoistResponse<TodoistProject>> GetProjectsAsync(
-        CancellationToken cancellationToken = default);
-
     [Get("/labels?limit=200")]
     Task<TodoistResponse<TodoistLabel>> GetLabelsAsync(
         CancellationToken cancellationToken = default);

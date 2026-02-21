@@ -130,25 +130,4 @@ internal static class Extensions
             return deleteCounter;
         }
     }
-
-    extension(TodoistProject project)
-    {
-        public int CountTasks(IList<TodoistProject> allProjects, IList<TodoistTask> allTasks)
-        {
-            return project.GetSubprojects(allProjects)
-                .Aggregate(
-                    allTasks.Count(t => t.ProjectId == project.Id),
-                    (counter, next) => counter + allTasks.Count(t => t.ProjectId == next.Id));
-        }
-
-        public IEnumerable<TodoistProject> GetSubprojects(IList<TodoistProject> allProjects)
-        {
-            var subprojects = allProjects.Where(p => p.ParentId == project.Id).ToList();
-
-            if (subprojects.Count == 0) return subprojects;
-
-            var subprojectsRecursive = subprojects.SelectMany(p => p.GetSubprojects(allProjects));
-            return subprojects.Concat(subprojectsRecursive);
-        }
-    }
 }
