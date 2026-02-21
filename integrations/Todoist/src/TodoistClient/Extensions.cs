@@ -102,6 +102,33 @@ internal static class Extensions
             await Task.WhenAll(apiCallTasks);
             return updateCounter;
         }
+
+        public async Task<int> DeleteLabelsAsync(
+            IEnumerable<TodoistLabel> labels,
+            int concurrentRequests = 5,
+            CancellationToken cancellationToken = default)
+        {
+            using var semaphore = new SemaphoreSlim(concurrentRequests);
+            var deleteCounter = 0;
+
+            var apiCallTasks = labels.Select(async label =>
+            {
+                await semaphore.WaitAsync(cancellationToken);
+
+                try
+                {
+                    await api.DeleteLabelAsync(label.Id, cancellationToken);
+                    Interlocked.Increment(ref deleteCounter);
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            });
+
+            await Task.WhenAll(apiCallTasks);
+            return deleteCounter;
+        }
     }
 
     extension(TodoistProject project)

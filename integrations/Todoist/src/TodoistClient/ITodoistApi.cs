@@ -8,6 +8,10 @@ internal interface ITodoistApi
     Task<TodoistResponse<TodoistProject>> GetProjectsAsync(
         CancellationToken cancellationToken = default);
 
+    [Get("/labels?limit=200")]
+    Task<TodoistResponse<TodoistLabel>> GetLabelsAsync(
+        CancellationToken cancellationToken = default);
+
     [Get("/tasks?ids={ids}&cursor={cursor}")]
     Task<TodoistResponse<TodoistTask>> GetTasksAsync(
         string ids,
@@ -35,5 +39,10 @@ internal interface ITodoistApi
     Task UpdateTaskAsync(
         string taskId,
         [Body] object request,
+        CancellationToken cancellationToken = default);
+
+    [Delete("/labels/{label_id}")]
+    Task DeleteLabelAsync(
+        [AliasAs("label_id")] string labelId,
         CancellationToken cancellationToken = default);
 }

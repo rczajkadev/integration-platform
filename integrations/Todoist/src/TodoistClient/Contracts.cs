@@ -17,6 +17,10 @@ internal sealed record TodoistProject(
     string Name,
     string Description) : ITodoistItem;
 
+internal sealed record TodoistLabel(
+    string Id,
+    string Name) : ITodoistItem;
+
 internal sealed record TodoistTask(
     string Id,
     [JsonProperty(PropertyName = "project_id")] string ProjectId,
