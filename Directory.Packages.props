@@ -10,7 +10,7 @@
     <PackageVersion Include="MailKit" Version="4.14.1" />
     <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
-    <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="2.23.0" />
+    <PackageVersion Include="Microsoft.ApplicationInsights.WorkerService" Version="3.0.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker" Version="2.51.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.50.0" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Http.AspNetCore" Version="2.1.0" />
@@ -18,8 +18,8 @@
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.3.1" />
     <PackageVersion Include="Microsoft.Azure.Functions.Worker.Sdk" Version="2.0.7" />
     <PackageVersion Include="Microsoft.Extensions.Azure" Version="1.13.1" />
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.2" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.2" />
     <PackageVersion Include="Refit" Version="9.0.2" />
     <PackageVersion Include="Refit.HttpClientFactory" Version="9.0.2" />
