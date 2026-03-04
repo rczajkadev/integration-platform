@@ -25,8 +25,11 @@ builder.Services.AddNotifications(
     builder.Configuration,
     optionsSectionName: "Notifications");
 
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<ITodoistApi, CachedTodoistApi>();
+
 builder.Services
-    .AddRefitClient<ITodoistApi>(new RefitSettings
+    .AddRefitClient<ITodoistRawApi>(new RefitSettings
     {
         ContentSerializer = new NewtonsoftJsonContentSerializer(
             new JsonSerializerSettings
