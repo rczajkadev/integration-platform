@@ -2,5 +2,8 @@
 
 set -e
 
-dotnet build
+dotnet restore
+dotnet build --no-restore
+dotnet test --no-build --no-restore
+
 git add ./openapi/**

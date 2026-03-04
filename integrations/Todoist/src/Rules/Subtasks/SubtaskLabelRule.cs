@@ -11,6 +11,8 @@ internal sealed class SubtaskLabelRule(
     ITodoistApi todoist,
     ILogger<SubtaskLabelRule> logger) : ITodoistRule
 {
+    public int Order => 1;
+
     private const string SubtaskFilter = "subtask";
 
     /// <inheritdoc />

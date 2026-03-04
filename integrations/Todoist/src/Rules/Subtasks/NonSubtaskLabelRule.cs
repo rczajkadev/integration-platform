@@ -10,6 +10,8 @@ internal sealed class NonSubtaskLabelRule(
     ITodoistApi todoist,
     ILogger<NonSubtaskLabelRule> logger) : ITodoistRule
 {
+    public int Order => 2;
+
     private const string NonSubtaskWithSubtaskLabelFilter = "!subtask & @subtask";
 
     /// <inheritdoc />

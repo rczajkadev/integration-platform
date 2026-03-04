@@ -26,10 +26,7 @@ internal sealed class EnforceRules(
         try
         {
             var context = new TodoistRuleContext();
-
-            foreach (var rule in rules)
-                await rule.ExecuteAsync(context, cancellationToken);
-
+            await rules.ExecuteInOrderAsync(context, cancellationToken);
             await SendNotificationsAsync(context, cancellationToken);
         }
         catch (Exception ex)

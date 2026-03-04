@@ -6,6 +6,7 @@
     <Project Path="integrations/GoogleDrive/src/GoogleDrive.csproj" />
     <Project Path="integrations/Todoist/src/Todoist.csproj" />
     <Project Path="integrations/WeightTracker/src/WeightTracker.csproj" />
+    <Project Path="integrations/Todoist/tests/Todoist.Tests.csproj" />
     <!-- <Project Path="integrations/_GoogleTokenRetriever/_GoogleTokenRetriever.csproj" /> -->
   </Folder>
   <Folder Name="/libraries/Public/">

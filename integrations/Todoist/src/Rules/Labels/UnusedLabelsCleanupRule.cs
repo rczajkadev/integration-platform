@@ -10,6 +10,8 @@ internal sealed class UnusedLabelsCleanupRule(
     ITodoistApi todoist,
     ILogger<UnusedLabelsCleanupRule> logger) : ITodoistRule
 {
+    public int Order => 6;
+
     /// <inheritdoc />
     /// <seealso cref="UnusedLabelsCleanupRule" />
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)

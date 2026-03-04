@@ -15,6 +15,8 @@ internal sealed class RecurringTaskInactiveLabelRule(
     IOptions<TodoistProjectIdsOptions> options,
     ILogger<RecurringTaskInactiveLabelRule> logger) : ITodoistRule
 {
+    public int Order => 4;
+
     private readonly string _recurringProjectId = options.Value.Recurring;
 
     /// <inheritdoc />
