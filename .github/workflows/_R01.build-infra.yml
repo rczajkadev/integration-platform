@@ -23,7 +23,7 @@ jobs:
           az bicep build-params -f main.bicepparam --outfile parameters.json
 
       - name: Upload infrastructure artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: infra
           path: ${{ inputs.infra-directory }}/*.json
