@@ -3,7 +3,7 @@
     "path": "..\\..\\integration-platform.slnx",
     "projects": [
       "integrations\\Todoist\\src\\Todoist.csproj",
-      "integrations\\Todoist\\tests\\Integrations.Todoist.Tests.csproj"
+      "integrations\\Todoist\\tests\\Todoist.Tests.csproj"
     ]
   }
 }
