@@ -47,5 +47,11 @@ internal sealed class UnusedLabelsCleanupRule(
         var deletedCount = await todoist.DeleteLabelsAsync(labelsToDelete, cancellationToken: cancellationToken);
 
         logger.LogInformation("Deleted {DeletedCount} unused labels.", deletedCount);
+
+        if (deletedCount > 0)
+        {
+            var deletedLabels = string.Join(", ", labelsToDelete.Select(label => label.Name).OrderBy(name => name, StringComparer.OrdinalIgnoreCase));
+            context.AddMessage($"Deleted {deletedCount} unused Todoist labels: {deletedLabels}.");
+        }
     }
 }

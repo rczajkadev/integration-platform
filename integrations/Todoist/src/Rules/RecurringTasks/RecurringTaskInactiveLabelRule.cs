@@ -50,7 +50,11 @@ internal sealed class RecurringTaskInactiveLabelRule(
             ApplyRules(task, labelsToUpdate, tasksWithNonRecurringDueDate);
         }
 
-        await SaveChangesAsync(tasksInRecurringProject, labelsToUpdate, cancellationToken);
+        var updatedCount = await SaveChangesAsync(tasksInRecurringProject, labelsToUpdate, cancellationToken);
+
+        if (updatedCount > 0)
+            context.AddMessage($"Updated inactive labels for {updatedCount} tasks in the Recurring project.");
+
         ReportNonRecurringDueDates(tasksWithNonRecurringDueDate, context);
     }
 
@@ -77,7 +81,7 @@ internal sealed class RecurringTaskInactiveLabelRule(
         RemoveInactiveLabel(task, labels, labelsToUpdate);
     }
 
-    private async Task SaveChangesAsync(
+    private async Task<int> SaveChangesAsync(
         IReadOnlyCollection<TodoistTask> tasks,
         Dictionary<string, IReadOnlyCollection<string>> labelsToUpdate,
         CancellationToken cancellationToken)
@@ -85,7 +89,7 @@ internal sealed class RecurringTaskInactiveLabelRule(
         if (labelsToUpdate.Count == 0)
         {
             logger.LogInformation("No label updates required.");
-            return;
+            return 0;
         }
 
         var tasksToUpdate = tasks.Where(task => labelsToUpdate.ContainsKey(task.Id)).ToList();
@@ -96,6 +100,7 @@ internal sealed class RecurringTaskInactiveLabelRule(
             cancellationToken: cancellationToken);
 
         logger.LogInformation("Updated labels for {UpdatedCount} tasks.", updatedCount);
+        return updatedCount;
     }
 
     private static IReadOnlyCollection<string> GetLabelsSnapshot(IEnumerable<string> labels)

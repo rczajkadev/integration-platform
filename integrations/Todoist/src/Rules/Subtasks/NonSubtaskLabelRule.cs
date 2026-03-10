@@ -38,6 +38,9 @@ internal sealed class NonSubtaskLabelRule(
             cancellationToken: cancellationToken);
 
         logger.LogInformation("Updated labels for {UpdatedCount} non-subtasks.", updatedCount);
+
+        if (updatedCount > 0)
+            context.AddMessage($"Removed '{Constants.SubtaskLabel}' label from {updatedCount} non-subtasks.");
     }
 
     private async Task<List<TodoistTask>> FetchNonSubtasksWithSubtaskLabelAsync(CancellationToken cancellationToken)

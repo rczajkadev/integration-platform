@@ -41,8 +41,8 @@ internal sealed class EnforceRules(
     {
         if (!context.HasMessages) return;
 
-        const string subject = "Todoist - rules require manual review";
-        var body = string.Join(Environment.NewLine, context.Messages);
+        const string subject = "Todoist - rules notification";
+        var body = string.Join(Environment.NewLine, context.Messages.Select(message => $"- {message}"));
         await notificationSender.SendAsync(subject, body, cancellationToken);
     }
 

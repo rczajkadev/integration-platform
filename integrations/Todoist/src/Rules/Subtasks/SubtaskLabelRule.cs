@@ -42,8 +42,14 @@ internal sealed class SubtaskLabelRule(
             AddLabelsToParent(parentLabelsToAdd, task.ParentId, labels);
         }
 
-        await ApplySubtaskLabelUpdatesAsync(subtasks, subtaskLabelUpdates, cancellationToken);
-        await UpdateParentLabelsAsync(parentLabelsToAdd, cancellationToken);
+        var updatedSubtasks = await ApplySubtaskLabelUpdatesAsync(subtasks, subtaskLabelUpdates, cancellationToken);
+        var updatedParents = await UpdateParentLabelsAsync(parentLabelsToAdd, cancellationToken);
+
+        if (updatedSubtasks > 0)
+            context.AddMessage($"Reset labels to only '{Constants.SubtaskLabel}' for {updatedSubtasks} subtasks.");
+
+        if (updatedParents > 0)
+            context.AddMessage($"Propagated labels from subtasks to {updatedParents} parent tasks.");
     }
 
     private async Task<List<TodoistTask>> FetchSubtasksAsync(CancellationToken cancellationToken)
@@ -52,7 +58,7 @@ internal sealed class SubtaskLabelRule(
             .Where(task => !string.IsNullOrWhiteSpace(task.ParentId))];
     }
 
-    private async Task ApplySubtaskLabelUpdatesAsync(
+    private async Task<int> ApplySubtaskLabelUpdatesAsync(
         IReadOnlyCollection<TodoistTask> subtasks,
         IReadOnlyDictionary<string, IReadOnlyCollection<string>> subtaskLabelUpdates,
         CancellationToken cancellationToken)
@@ -60,7 +66,7 @@ internal sealed class SubtaskLabelRule(
         if (subtaskLabelUpdates.Count == 0)
         {
             logger.LogInformation("No subtasks to update.");
-            return;
+            return 0;
         }
 
         logger.LogInformation("Updating subtasks...");
@@ -73,16 +79,17 @@ internal sealed class SubtaskLabelRule(
             cancellationToken: cancellationToken);
 
         logger.LogInformation("Updated {UpdatedCount} subtasks.", updatedCount);
+        return updatedCount;
     }
 
-    private async Task UpdateParentLabelsAsync(
+    private async Task<int> UpdateParentLabelsAsync(
         IReadOnlyDictionary<string, HashSet<string>> parentLabelsToAdd,
         CancellationToken cancellationToken)
     {
         if (parentLabelsToAdd.Count == 0)
         {
             logger.LogInformation("No parent labels to update.");
-            return;
+            return 0;
         }
 
         logger.LogInformation("Updating parent labels...");
@@ -102,6 +109,7 @@ internal sealed class SubtaskLabelRule(
             cancellationToken: cancellationToken);
 
         logger.LogInformation("Updated labels for {UpdatedCount} parents.", updatedCount);
+        return updatedCount;
     }
 
     private static void AddLabelsToParent(
