@@ -10,6 +10,13 @@ internal sealed class UnusedLabelsCleanupRule(
     ITodoistApi todoist,
     ILogger<UnusedLabelsCleanupRule> logger) : ITodoistRule
 {
+    private static readonly HashSet<string> ExcludedLabels = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "impact",
+        "inactive",
+        "subtask"
+    };
+
     public int Order => 6;
 
     /// <inheritdoc />
@@ -34,7 +41,10 @@ internal sealed class UnusedLabelsCleanupRule(
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         var labelsToDelete = labels
-            .Where(label => !string.IsNullOrWhiteSpace(label.Name) && !usedLabels.Contains(label.Name))
+            .Where(label =>
+                !string.IsNullOrWhiteSpace(label.Name) &&
+                !usedLabels.Contains(label.Name) &&
+                !ExcludedLabels.Contains(label.Name))
             .ToList();
 
         if (labelsToDelete.Count == 0)
