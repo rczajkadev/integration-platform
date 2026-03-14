@@ -10,12 +10,12 @@ internal sealed class UnusedLabelsCleanupRule(
     ITodoistApi todoist,
     ILogger<UnusedLabelsCleanupRule> logger) : ITodoistRule
 {
-    private static readonly HashSet<string> ExcludedLabels = new(StringComparer.OrdinalIgnoreCase)
-    {
+    private static readonly HashSet<string> ExcludedLabels =
+    [
         "impact",
         "inactive",
         "subtask"
-    };
+    ];
 
     public int Order => 6;
 
