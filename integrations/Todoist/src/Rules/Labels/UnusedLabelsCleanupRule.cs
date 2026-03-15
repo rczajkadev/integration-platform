@@ -12,12 +12,13 @@ internal sealed class UnusedLabelsCleanupRule(
 {
     private static readonly HashSet<string> ExcludedLabels =
     [
-        "impact",
-        "inactive",
-        "subtask"
+        Constants.ImpactLable,
+        Constants.InactiveLabel,
+        Constants.SubtaskLabel,
+        Constants.BlockedLabel
     ];
 
-    public int Order => 6;
+    public int Order => 7;
 
     /// <inheritdoc />
     /// <seealso cref="UnusedLabelsCleanupRule" />

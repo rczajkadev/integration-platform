@@ -31,6 +31,11 @@ internal interface ITodoistApi
         string? cursor = null,
         CancellationToken cancellationToken = default);
 
+    [Get("/comments?task_id={taskId}&limit=200")]
+    Task<TodoistResponse<TodoistComment>> GetCommentsByTaskAsync(
+        string taskId,
+        CancellationToken cancellationToken = default);
+
     [Post("/tasks/{taskId}")]
     Task UpdateTaskAsync(
         string taskId,

@@ -15,6 +15,11 @@ internal sealed record TodoistLabel(
     string Id,
     string Name) : ITodoistItem;
 
+internal sealed record TodoistComment(
+    string Id,
+    string TaskId,
+    string Content) : ITodoistItem;
+
 internal sealed record TodoistTask(
     string Id,
     string ProjectId,

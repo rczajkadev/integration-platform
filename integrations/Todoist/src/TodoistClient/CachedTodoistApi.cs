@@ -15,6 +15,7 @@ internal sealed class CachedTodoistApi(
     };
 
     private readonly ConcurrentDictionary<string, byte> _taskKeys = new(StringComparer.Ordinal);
+    private readonly ConcurrentDictionary<string, byte> _commentKeys = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<string, byte> _labelKeys = new(StringComparer.Ordinal);
 
     public Task<TodoistResponse<TodoistLabel>> GetLabelsAsync(CancellationToken cancellationToken = default)
@@ -56,6 +57,14 @@ internal sealed class CachedTodoistApi(
     {
         var key = $"tasks:filter:{query}:cursor:{cursor ?? "<null>"}";
         return GetOrCreateAsync(key, _taskKeys, () => api.GetTasksByFilterAsync(query, cursor, cancellationToken));
+    }
+
+    public Task<TodoistResponse<TodoistComment>> GetCommentsByTaskAsync(
+        string taskId,
+        CancellationToken cancellationToken = default)
+    {
+        var key = $"comments:task:{taskId}";
+        return GetOrCreateAsync(key, _commentKeys, () => api.GetCommentsByTaskAsync(taskId, cancellationToken));
     }
 
     public async Task UpdateTaskAsync(
