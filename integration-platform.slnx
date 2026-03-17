@@ -2,12 +2,20 @@
   <Folder Name="/integrations/">
     <File Path="integrations/Directory.Build.props" />
     <File Path="integrations/Directory.Build.targets" />
-    <Project Path="integrations/Gmail/src/Gmail.csproj" />
-    <Project Path="integrations/GoogleDrive/src/GoogleDrive.csproj" />
-    <Project Path="integrations/Todoist/src/Todoist.csproj" />
-    <Project Path="integrations/WeightTracker/src/WeightTracker.csproj" />
-    <Project Path="integrations/Todoist/tests/Todoist.Tests.csproj" />
     <!-- <Project Path="integrations/_GoogleTokenRetriever/_GoogleTokenRetriever.csproj" /> -->
+  </Folder>
+  <Folder Name="/integrations/Gmail/">
+    <Project Path="integrations/Gmail/src/Gmail.csproj" />
+  </Folder>
+  <Folder Name="/integrations/GoogleDrive/">
+    <Project Path="integrations/GoogleDrive/src/GoogleDrive.csproj" />
+  </Folder>
+  <Folder Name="/integrations/Todoist/">
+    <Project Path="integrations/Todoist/src/Todoist.csproj" />
+    <Project Path="integrations/Todoist/tests/Todoist.Tests.csproj" />
+  </Folder>
+  <Folder Name="/integrations/WeightTracker/">
+    <Project Path="integrations/WeightTracker/src/WeightTracker.csproj" />
   </Folder>
   <Folder Name="/libraries/Public/">
     <Project Path="libraries/Public/Clients.Gmail/Clients.Gmail.csproj" />
