@@ -18,7 +18,7 @@ internal sealed class UnusedLabelsCleanupRule(
         Constants.BlockedLabel
     ];
 
-    public int Order => 7;
+    public int Order => 8;
 
     /// <inheritdoc />
     /// <seealso cref="UnusedLabelsCleanupRule" />
