@@ -14,6 +14,8 @@ internal sealed class BlockedTaskReportRule(
 
     public int Order => 7;
 
+    /// <inheritdoc />
+    /// <seealso cref="BlockedTaskReportRule" />
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching tasks with the {Label} label for blocked task report...", Constants.BlockedLabel);

@@ -16,6 +16,8 @@ internal sealed class BlockedTaskCommentRule(
 
     public int Order => 6;
 
+    /// <inheritdoc />
+    /// <seealso cref="BlockedTaskCommentRule" />
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching tasks with the {Label} label...", Constants.BlockedLabel);
