@@ -91,8 +91,7 @@ internal sealed class BlockedTaskCommentRule(
 
     private static string BuildMessage(IReadOnlyCollection<ValidationError> invalidTasks)
     {
-        var items = invalidTasks
-            .Select((task, index) => $"{index + 1}) {task.Task.Content} ({task.Task.Id}) - {task.Message}");
+        var items = invalidTasks.Select((task, index) => $"{index + 1}) {task.Task.Content} - {task.Message}");
 
         return $"Found {invalidTasks.Count} blocked tasks with invalid blocker comments:{Environment.NewLine}" +
                string.Join(Environment.NewLine, items);

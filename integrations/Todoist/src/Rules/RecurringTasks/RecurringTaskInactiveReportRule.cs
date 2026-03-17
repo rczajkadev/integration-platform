@@ -47,8 +47,7 @@ internal sealed class RecurringTaskInactiveReportRule(
 
     private static string BuildInactiveTasksMessage(IReadOnlyCollection<TodoistTask> inactiveTasks)
     {
-        var items = inactiveTasks
-            .Select((task, index) => $"{index + 1}) {task.Content} ({task.Id})");
+        var items = inactiveTasks.Select((task, index) => $"{index + 1}) {task.Content}");
 
         return $"""
             Found {inactiveTasks.Count} inactive tasks in Recurring project:
