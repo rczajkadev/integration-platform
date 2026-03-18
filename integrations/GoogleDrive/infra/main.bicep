@@ -33,10 +33,6 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
     integrationName: integrationName
     customAppSettings: [
       {
-        name: 'KeyVaultUri'
-        value: keyVault.properties.vaultUri
-      }
-      {
         name: 'AccountingRecordsBackupCronSchedule'
         value: accountingRecordsBackupCronSchedule
       }
@@ -69,10 +65,6 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
         value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${driveWorkJsonCredentialsSecretName})'
       }
       {
-        name: 'GoogleDrive__0__KeyVaultSecretName'
-        value: driveWorkJsonCredentialsSecretName
-      }
-      {
         name: 'GoogleDrive__0__ConcurrentDownloads'
         value: concurrentDownloads
       }
@@ -87,10 +79,6 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
       {
         name: 'GoogleDrive__1__JsonCredentials'
         value: '@Microsoft.KeyVault(VaultName=${keyVault.name};SecretName=${drivePersonalJsonCredentialsSecretName})'
-      }
-      {
-        name: 'GoogleDrive__1__KeyVaultSecretName'
-        value: drivePersonalJsonCredentialsSecretName
       }
       {
         name: 'GoogleDrive__1__ConcurrentDownloads'

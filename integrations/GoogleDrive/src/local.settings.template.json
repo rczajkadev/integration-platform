@@ -6,7 +6,6 @@
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
     "ServiceBusConnectionString": "",
-    "KeyVaultUri": "",
     "NumberOfTasksServiceBusQueueName": "",
     "AccountingRecordsBackupCronSchedule": "0 0 2 1 * *",
     "HenrySavesBackupCronSchedule": "0 0 2 */7 * *",
@@ -19,13 +18,11 @@
     "GoogleDrive__0__AccountType": "Work",
     "GoogleDrive__0__ApplicationName": "Integration Platform",
     "GoogleDrive__0__JsonCredentials": "",
-    "GoogleDrive__0__KeyVaultSecretName": "",
     "GoogleDrive__0__ConcurrentDownloads": 100,
 
     "GoogleDrive__1__AccountType": "Personal",
     "GoogleDrive__1__ApplicationName": "Integration Platform",
     "GoogleDrive__1__JsonCredentials": "",
-    "GoogleDrive__1__KeyVaultSecretName": "",
     "GoogleDrive__1__ConcurrentDownloads": 100,
 
     "Backup__0__BackupType": "AccountingRecords",

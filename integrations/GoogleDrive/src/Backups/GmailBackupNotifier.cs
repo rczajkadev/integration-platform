@@ -14,8 +14,8 @@ internal sealed class GmailBackupNotifier(
     {
         var subject = $"GoogleDrive - backup {backupType} completed";
         var body = $"""
-            Backup '{backupType}' completed at {DateTimeOffset.UtcNow:O}.
-            File: {filename}";
+            Backup '{backupType}' completed at {DateTimeOffset.UtcNow:O}
+            File: {filename}
             """;
 
         try

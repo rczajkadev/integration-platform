@@ -12,7 +12,5 @@ internal sealed class GoogleDriveOptions
 
     public string JsonCredentials { get; init; } = null!;
 
-    public string KeyVaultSecretName { get; init; } = null!;
-
     public int ConcurrentDownloads { get; init; } = 1;
 }
