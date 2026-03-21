@@ -45,11 +45,19 @@ internal sealed class SubtaskLabelRule(
         var updatedSubtasks = await ApplySubtaskLabelUpdatesAsync(subtasks, subtaskLabelUpdates, cancellationToken);
         var updatedParents = await UpdateParentLabelsAsync(parentLabelsToAdd, cancellationToken);
 
-        if (updatedSubtasks > 0)
-            context.AddMessage($"Reset labels to only '{Constants.SubtaskLabel}' for {updatedSubtasks} subtasks.");
+        if (updatedSubtasks.Count > 0)
+        {
+            context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+                $"Reset labels to only '{Constants.SubtaskLabel}' for {updatedSubtasks.Count} subtasks:",
+                updatedSubtasks.Select(task => task.Content)));
+        }
 
-        if (updatedParents > 0)
-            context.AddMessage($"Propagated labels from subtasks to {updatedParents} parent tasks.");
+        if (updatedParents.Count > 0)
+        {
+            context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+                $"Propagated labels from subtasks to {updatedParents.Count} parent tasks:",
+                updatedParents.Select(task => task.Content)));
+        }
     }
 
     private async Task<List<TodoistTask>> FetchSubtasksAsync(CancellationToken cancellationToken)
@@ -58,7 +66,7 @@ internal sealed class SubtaskLabelRule(
             .Where(task => !string.IsNullOrWhiteSpace(task.ParentId))];
     }
 
-    private async Task<int> ApplySubtaskLabelUpdatesAsync(
+    private async Task<IReadOnlyCollection<TodoistTask>> ApplySubtaskLabelUpdatesAsync(
         IReadOnlyCollection<TodoistTask> subtasks,
         IReadOnlyDictionary<string, IReadOnlyCollection<string>> subtaskLabelUpdates,
         CancellationToken cancellationToken)
@@ -66,7 +74,7 @@ internal sealed class SubtaskLabelRule(
         if (subtaskLabelUpdates.Count == 0)
         {
             logger.LogInformation("No subtasks to update.");
-            return 0;
+            return [];
         }
 
         logger.LogInformation("Updating subtasks...");
@@ -79,22 +87,22 @@ internal sealed class SubtaskLabelRule(
             cancellationToken: cancellationToken);
 
         logger.LogInformation("Updated {UpdatedCount} subtasks.", updatedCount);
-        return updatedCount;
+        return tasksToUpdate;
     }
 
-    private async Task<int> UpdateParentLabelsAsync(
+    private async Task<IReadOnlyCollection<TodoistTask>> UpdateParentLabelsAsync(
         IReadOnlyDictionary<string, HashSet<string>> parentLabelsToAdd,
         CancellationToken cancellationToken)
     {
         if (parentLabelsToAdd.Count == 0)
         {
             logger.LogInformation("No parent labels to update.");
-            return 0;
+            return [];
         }
 
         logger.LogInformation("Updating parent labels...");
 
-        var parents = await todoist.GetTasksAsync(parentLabelsToAdd.Keys.ToList(), cancellationToken);
+        var parents = (await todoist.GetTasksAsync([.. parentLabelsToAdd.Keys], cancellationToken)).ToList();
 
         var updatedCount = await todoist.UpdateTasksAsync(
             parents,
@@ -109,7 +117,7 @@ internal sealed class SubtaskLabelRule(
             cancellationToken: cancellationToken);
 
         logger.LogInformation("Updated labels for {UpdatedCount} parents.", updatedCount);
-        return updatedCount;
+        return parents;
     }
 
     private static void AddLabelsToParent(

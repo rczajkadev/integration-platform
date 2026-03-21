@@ -32,14 +32,8 @@ internal sealed class BlockedTaskReportRule(
         }
 
         logger.LogInformation("Found {TaskCount} blocked tasks.", blockedTasks.Length);
-        context.AddMessage(BuildMessage(blockedTasks));
-    }
-
-    private static string BuildMessage(TodoistTask[] blockedTasks)
-    {
-        var items = blockedTasks.Select((task, index) => $"{index + 1}) {task.Content}");
-
-        return $"Found {blockedTasks.Length} blocked tasks:{Environment.NewLine}" +
-               string.Join(Environment.NewLine, items);
+        context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+            $"Found {blockedTasks.Length} blocked tasks:",
+            blockedTasks.Select(task => task.Content)));
     }
 }

@@ -46,7 +46,11 @@ internal sealed class SubtaskDueDateRule(
         logger.LogInformation("Removed due dates from {UpdatedCount} subtasks.", updatedCount);
 
         if (updatedCount > 0)
-            context.AddMessage($"Removed due dates from {updatedCount} subtasks.");
+        {
+            context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+                $"Removed due dates from {updatedCount} subtasks:",
+                tasksWithDueDate.Select(task => task.Content)));
+        }
     }
 
     private async Task<List<TodoistTask>> FetchSubtasksAsync(CancellationToken cancellationToken)

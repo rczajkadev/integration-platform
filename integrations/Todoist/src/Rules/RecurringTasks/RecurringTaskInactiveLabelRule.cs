@@ -50,10 +50,14 @@ internal sealed class RecurringTaskInactiveLabelRule(
             ApplyRules(task, labelsToUpdate, tasksWithNonRecurringDueDate);
         }
 
-        var updatedCount = await SaveChangesAsync(tasksInRecurringProject, labelsToUpdate, cancellationToken);
+        var updatedTasks = await SaveChangesAsync(tasksInRecurringProject, labelsToUpdate, cancellationToken);
 
-        if (updatedCount > 0)
-            context.AddMessage($"Updated inactive labels for {updatedCount} tasks in the Recurring project.");
+        if (updatedTasks.Count > 0)
+        {
+            context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+                $"Updated inactive labels for {updatedTasks.Count} tasks in the Recurring project:",
+                updatedTasks.Select(task => task.Content)));
+        }
 
         ReportNonRecurringDueDates(tasksWithNonRecurringDueDate, context);
     }
@@ -81,7 +85,7 @@ internal sealed class RecurringTaskInactiveLabelRule(
         RemoveInactiveLabel(task, labels, labelsToUpdate);
     }
 
-    private async Task<int> SaveChangesAsync(
+    private async Task<IReadOnlyCollection<TodoistTask>> SaveChangesAsync(
         IReadOnlyCollection<TodoistTask> tasks,
         Dictionary<string, IReadOnlyCollection<string>> labelsToUpdate,
         CancellationToken cancellationToken)
@@ -89,7 +93,7 @@ internal sealed class RecurringTaskInactiveLabelRule(
         if (labelsToUpdate.Count == 0)
         {
             logger.LogInformation("No label updates required.");
-            return 0;
+            return [];
         }
 
         var tasksToUpdate = tasks.Where(task => labelsToUpdate.ContainsKey(task.Id)).ToList();
@@ -100,7 +104,7 @@ internal sealed class RecurringTaskInactiveLabelRule(
             cancellationToken: cancellationToken);
 
         logger.LogInformation("Updated labels for {UpdatedCount} tasks.", updatedCount);
-        return updatedCount;
+        return tasksToUpdate;
     }
 
     private static IReadOnlyCollection<string> GetLabelsSnapshot(IEnumerable<string> labels)
@@ -155,6 +159,9 @@ internal sealed class RecurringTaskInactiveLabelRule(
         if (count < 1) return;
 
         logger.LogWarning("Found {TaskCount} tasks with non-recurring due dates in Recurring project.", count);
-        context.AddMessage($"Found {count} tasks with non-recurring due dates in Recurring project.");
+
+        context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+            $"Found {count} tasks with non-recurring due dates in Recurring project:",
+            tasksWithNonRecurringDueDate.Select(task => task.Content)));
     }
 }

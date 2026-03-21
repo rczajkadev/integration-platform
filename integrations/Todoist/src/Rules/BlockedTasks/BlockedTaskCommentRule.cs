@@ -43,7 +43,9 @@ internal sealed class BlockedTaskCommentRule(
         }
 
         logger.LogWarning("Found {TaskCount} blocked tasks with invalid blocker comments.", invalidTasks.Length);
-        context.AddMessage(BuildMessage(invalidTasks));
+        context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+            $"Found {invalidTasks.Length} blocked tasks with invalid blocker comments:",
+            invalidTasks.Select(task => $"{task.Task.Content} - {task.Message}")));
     }
 
     private async Task<ValidationError?> ValidateCommentsAsync(TodoistTask task, CancellationToken cancellationToken)
@@ -89,14 +91,6 @@ internal sealed class BlockedTaskCommentRule(
 
         var taskId = parsedUrl.AbsolutePath[TodoistTaskPathPrefix.Length..];
         return !string.IsNullOrWhiteSpace(taskId) && !taskId.Contains('/');
-    }
-
-    private static string BuildMessage(IReadOnlyCollection<ValidationError> invalidTasks)
-    {
-        var items = invalidTasks.Select((task, index) => $"{index + 1}) {task.Task.Content} - {task.Message}");
-
-        return $"Found {invalidTasks.Count} blocked tasks with invalid blocker comments:{Environment.NewLine}" +
-               string.Join(Environment.NewLine, items);
     }
 
     private sealed record ValidationError(TodoistTask Task, string Message);

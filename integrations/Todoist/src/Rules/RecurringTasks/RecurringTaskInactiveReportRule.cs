@@ -42,17 +42,9 @@ internal sealed class RecurringTaskInactiveReportRule(
         }
 
         logger.LogInformation("Found {TaskCount} inactive tasks in Recurring project.", inactiveTasks.Length);
-        context.AddMessage(BuildInactiveTasksMessage(inactiveTasks));
-    }
-
-    private static string BuildInactiveTasksMessage(IReadOnlyCollection<TodoistTask> inactiveTasks)
-    {
-        var items = inactiveTasks.Select((task, index) => $"{index + 1}) {task.Content}");
-
-        return $"""
-            Found {inactiveTasks.Count} inactive tasks in Recurring project:
-            {string.Join(Environment.NewLine, items)}
-            """;
+        context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+            $"Found {inactiveTasks.Length} inactive tasks in Recurring project:",
+            inactiveTasks.Select(task => task.Content)));
     }
 
     private static bool IsInactiveLabel(string label)
