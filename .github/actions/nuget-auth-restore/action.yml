@@ -4,6 +4,9 @@ inputs:
   working-directory:
     description: Directory to run restore in.
     required: true
+  github-token:
+    description: Token used to authenticate against GitHub Packages.
+    required: true
 
 runs:
   using: composite
@@ -13,7 +16,7 @@ runs:
       run: |
         dotnet nuget update source github \
           --username "${{ github.repository_owner }}" \
-          --password "${{ secrets.GITHUB_TOKEN }}" \
+          --password "${{ inputs.github-token }}" \
           --store-password-in-clear-text \
           --configfile "${{ github.workspace }}/nuget.prod.config"
 

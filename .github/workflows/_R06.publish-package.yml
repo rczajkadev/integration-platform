@@ -33,6 +33,7 @@ jobs:
       - name: NuGet auth and restore
         uses: ./.github/actions/nuget-auth-restore
         with:
+          github-token: ${{ github.token }}
           working-directory: ${{ env.PROJECT_DIRECTORY }}
 
       - name: Build
