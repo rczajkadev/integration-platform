@@ -4,13 +4,14 @@ using Microsoft.Extensions.Logging;
 namespace Integrations.Todoist.Rules.BlockedTasks;
 
 /// <summary>
-/// Reports tasks that are currently marked as blocked.
+/// Reports tasks that are currently marked as blocked and their blockers.
 /// </summary>
 internal sealed class BlockedTaskReportRule(
     ITodoistApi todoist,
     ILogger<BlockedTaskReportRule> logger) : ITodoistRule
 {
     private const string BlockedFilter = "@blocked";
+    private const string BlockerFilter = "@blocker";
 
     public int Order => 7;
 
@@ -25,15 +26,37 @@ internal sealed class BlockedTaskReportRule(
             .ThenBy(task => task.Id, StringComparer.Ordinal)
             .ToArray();
 
-        if (blockedTasks.Length == 0)
+        logger.LogInformation("Fetching tasks with the {Label} label for blocker task report...", Constants.BlockerLabel);
+
+        var blockerTasks = (await todoist.GetTasksByFilterAsync(BlockerFilter, cancellationToken))
+            .OrderBy(task => task.Content, StringComparer.OrdinalIgnoreCase)
+            .ThenBy(task => task.Id, StringComparer.Ordinal)
+            .ToArray();
+
+        if (blockedTasks.Length == 0 && blockerTasks.Length == 0)
         {
-            logger.LogInformation("No blocked tasks found for report.");
+            logger.LogInformation("No blocked or blocker tasks found for report.");
             return;
         }
 
-        logger.LogInformation("Found {TaskCount} blocked tasks.", blockedTasks.Length);
-        context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
-            $"Found {blockedTasks.Length} blocked tasks:",
-            blockedTasks.Select(task => task.Content)));
+        logger.LogInformation("Found {BlockedTaskCount} blocked tasks and {BlockerTaskCount} blocker tasks.", blockedTasks.Length, blockerTasks.Length);
+
+        var messageSections = new List<string>();
+
+        if (blockedTasks.Length > 0)
+        {
+            messageSections.Add(NotificationFormatter.BuildNumberedListMessage(
+                $"Found {blockedTasks.Length} blocked tasks:",
+                blockedTasks.Select(task => task.Content)));
+        }
+
+        if (blockerTasks.Length > 0)
+        {
+            messageSections.Add(NotificationFormatter.BuildNumberedListMessage(
+                $"Found {blockerTasks.Length} blocker tasks:",
+                blockerTasks.Select(task => task.Content)));
+        }
+
+        context.AddMessage(string.Join($"{Environment.NewLine}{Environment.NewLine}", messageSections));
     }
 }

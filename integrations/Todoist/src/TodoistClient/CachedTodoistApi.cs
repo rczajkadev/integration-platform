@@ -33,6 +33,14 @@ internal sealed class CachedTodoistApi(
         return GetOrCreateAsync(key, _taskKeys, () => api.GetTasksAsync(ids, cursor, cancellationToken));
     }
 
+    public Task<TodoistTask> GetTaskAsync(
+        string taskId,
+        CancellationToken cancellationToken = default)
+    {
+        var key = $"tasks:single:{taskId}";
+        return GetOrCreateAsync(key, _taskKeys, () => api.GetTaskAsync(taskId, cancellationToken));
+    }
+
     public Task<TodoistResponse<TodoistTask>> GetTasksAsync(
         string? cursor = null,
         CancellationToken cancellationToken = default)

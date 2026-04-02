@@ -14,6 +14,11 @@ internal interface ITodoistApi
         string? cursor = null,
         CancellationToken cancellationToken = default);
 
+    [Get("/tasks/{taskId}")]
+    Task<TodoistTask> GetTaskAsync(
+        string taskId,
+        CancellationToken cancellationToken = default);
+
     [Get("/tasks?cursor={cursor}")]
     Task<TodoistResponse<TodoistTask>> GetTasksAsync(
         string? cursor = null,

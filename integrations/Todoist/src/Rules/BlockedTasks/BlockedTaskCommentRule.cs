@@ -1,16 +1,19 @@
 using Integrations.Todoist.TodoistClient;
 using Microsoft.Extensions.Logging;
+using Refit;
 
 namespace Integrations.Todoist.Rules.BlockedTasks;
 
 /// <summary>
 /// Validates that blocked tasks have blocker comments pointing to Todoist task URLs.
+/// Also adds blocker labels to tasks from the comments.
 /// </summary>
 internal sealed class BlockedTaskCommentRule(
     ITodoistApi todoist,
     ILogger<BlockedTaskCommentRule> logger) : ITodoistRule
 {
     private const string BlockedFilter = "@blocked";
+    private const string BlockerFilter = "@blocker";
     private const string BlockerCommentPrefix = "[blocker]";
     private const string TodoistTaskPathPrefix = "/app/task/";
 
@@ -24,15 +27,34 @@ internal sealed class BlockedTaskCommentRule(
         var blockedTasks = (await todoist.GetTasksByFilterAsync(BlockedFilter, cancellationToken)).ToArray();
 
         if (blockedTasks.Length == 0)
-        {
             logger.LogInformation("No blocked tasks found.");
-            return;
-        }
 
         var validationResults = await Task.WhenAll(blockedTasks.Select(task => ValidateCommentsAsync(task, cancellationToken)));
 
+        var syncResult = await SyncBlockerLabelsAsync(
+            validationResults.SelectMany(result => result.BlockerReferences).ToArray(),
+            cancellationToken);
+
+        if (syncResult.UpdatedTasks.Count > 0)
+        {
+            context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+                $"Updated '{Constants.BlockerLabel}' label for {syncResult.UpdatedTasks.Count} tasks:",
+                syncResult.UpdatedTasks
+                    .OrderBy(task => task.Content, StringComparer.OrdinalIgnoreCase)
+                    .Select(task => task.Content)));
+        }
+
+        if (syncResult.InvalidReferences.Count > 0)
+        {
+            context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
+                $"Ignored {syncResult.InvalidReferences.Count} blocker references with invalid task IDs:",
+                syncResult.InvalidReferences
+                    .OrderBy(reference => reference.BlockedTask.Content, StringComparer.OrdinalIgnoreCase)
+                    .Select(reference => $"{reference.BlockedTask.Content} - {reference.Comment}")));
+        }
+
         var invalidTasks = validationResults
-            .OfType<ValidationError>()
+            .Where(result => result.Error is not null)
             .OrderBy(result => result.Task.Content, StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
@@ -45,10 +67,10 @@ internal sealed class BlockedTaskCommentRule(
         logger.LogWarning("Found {TaskCount} blocked tasks with invalid blocker comments.", invalidTasks.Length);
         context.AddMessage(NotificationFormatter.BuildNumberedListMessage(
             $"Found {invalidTasks.Length} blocked tasks with invalid blocker comments:",
-            invalidTasks.Select(task => $"{task.Task.Content} - {task.Message}")));
+            invalidTasks.Select(task => $"{task.Task.Content} - {task.Error!}")));
     }
 
-    private async Task<ValidationError?> ValidateCommentsAsync(TodoistTask task, CancellationToken cancellationToken)
+    private async Task<ValidationResult> ValidateCommentsAsync(TodoistTask task, CancellationToken cancellationToken)
     {
         var blockerComments = (await todoist.GetCommentsByTaskAsync(task.Id, cancellationToken)).Results
             .Select(comment => comment.Content.Trim())
@@ -56,19 +78,101 @@ internal sealed class BlockedTaskCommentRule(
             .ToArray();
 
         if (blockerComments.Length == 0)
-            return new ValidationError(task, "missing blocker comment");
+            return new ValidationResult(task, [], "missing blocker comment");
+
+        var blockerReferences = new List<BlockerReference>(blockerComments.Length);
 
         foreach (var blockerComment in blockerComments)
         {
-            if (!IsValidBlockerComment(blockerComment))
-                return new ValidationError(task, $"invalid blocker URL: {blockerComment}");
+            if (!TryGetBlockerTaskId(blockerComment, out var blockerTaskId))
+                return new ValidationResult(task, blockerReferences, $"invalid blocker URL: {blockerComment}");
+
+            blockerReferences.Add(new BlockerReference(task, blockerComment, blockerTaskId));
         }
 
-        return null;
+        return new ValidationResult(task, blockerReferences, null);
     }
 
-    private static bool IsValidBlockerComment(string blockerComment)
+    private async Task<SyncBlockerLabelsResult> SyncBlockerLabelsAsync(
+        IReadOnlyCollection<BlockerReference> blockerReferences,
+        CancellationToken cancellationToken)
     {
+        logger.LogInformation("Fetching tasks with the {Label} label...", Constants.BlockerLabel);
+        var currentBlockerTasks = (await todoist.GetTasksByFilterAsync(BlockerFilter, cancellationToken)).ToArray();
+
+        var desiredBlockerTaskIdSet = new HashSet<string>(StringComparer.Ordinal);
+        var blockerTasksToAdd = new List<TodoistTask>();
+        var invalidReferences = new List<BlockerReference>();
+
+        foreach (var referencesByTaskId in blockerReferences
+                     .GroupBy(reference => reference.BlockerTaskId, StringComparer.Ordinal))
+        {
+            try
+            {
+                var blockerTask = await todoist.GetTaskAsync(referencesByTaskId.Key, cancellationToken);
+                desiredBlockerTaskIdSet.Add(blockerTask.Id);
+
+                if (!HasBlockerLabel(blockerTask.Labels))
+                    blockerTasksToAdd.Add(blockerTask);
+            }
+            catch (Exception ex) when (IsInvalidBlockerTaskException(ex))
+            {
+                logger.LogWarning(ex, "Ignoring blocker task references for invalid task ID {TaskId}.", referencesByTaskId.Key);
+                invalidReferences.AddRange(referencesByTaskId);
+            }
+        }
+
+        var blockerTasksToRemove = currentBlockerTasks
+            .Where(task => !desiredBlockerTaskIdSet.Contains(task.Id))
+            .ToArray();
+
+        if (blockerTasksToAdd.Count == 0 && blockerTasksToRemove.Length == 0)
+        {
+            logger.LogInformation("No blocker label updates required.");
+            return new SyncBlockerLabelsResult([], invalidReferences);
+        }
+
+        if (blockerTasksToAdd.Count > 0)
+        {
+            logger.LogInformation("Adding {Label} label to {TaskCount} tasks...", Constants.BlockerLabel, blockerTasksToAdd.Count);
+            await todoist.UpdateTasksAsync(
+                blockerTasksToAdd,
+                task => new
+                {
+                    labels = task.Labels
+                        .Append(Constants.BlockerLabel)
+                        .Distinct(StringComparer.OrdinalIgnoreCase)
+                        .ToArray()
+                },
+                cancellationToken: cancellationToken);
+        }
+
+        if (blockerTasksToRemove.Length > 0)
+        {
+            logger.LogInformation("Removing {Label} label from {TaskCount} tasks...", Constants.BlockerLabel, blockerTasksToRemove.Length);
+            await todoist.UpdateTasksAsync(
+                blockerTasksToRemove,
+                task => new
+                {
+                    labels = task.Labels
+                        .Where(label => !IsBlockerLabel(label))
+                        .ToArray()
+                },
+                cancellationToken: cancellationToken);
+        }
+
+        return new SyncBlockerLabelsResult(
+            blockerTasksToAdd
+            .Concat(blockerTasksToRemove)
+            .DistinctBy(task => task.Id)
+            .ToArray(),
+            invalidReferences);
+    }
+
+    private static bool TryGetBlockerTaskId(string blockerComment, out string blockerTaskId)
+    {
+        blockerTaskId = "";
+
         if (!blockerComment.StartsWith(BlockerCommentPrefix, StringComparison.Ordinal))
             return false;
 
@@ -89,9 +193,59 @@ internal sealed class BlockedTaskCommentRule(
         if (!parsedUrl.AbsolutePath.StartsWith(TodoistTaskPathPrefix, StringComparison.Ordinal))
             return false;
 
-        var taskId = parsedUrl.AbsolutePath[TodoistTaskPathPrefix.Length..];
-        return !string.IsNullOrWhiteSpace(taskId) && !taskId.Contains('/');
+        var taskSegment = parsedUrl.AbsolutePath[TodoistTaskPathPrefix.Length..];
+
+        if (string.IsNullOrWhiteSpace(taskSegment) || taskSegment.Contains('/'))
+            return false;
+
+        var separatorIndex = taskSegment.LastIndexOf('-');
+        var taskId = separatorIndex >= 0
+            ? taskSegment[(separatorIndex + 1)..]
+            : taskSegment;
+
+        if (string.IsNullOrWhiteSpace(taskId))
+            return false;
+
+        blockerTaskId = taskId;
+        return true;
     }
 
-    private sealed record ValidationError(TodoistTask Task, string Message);
+    private static bool HasBlockerLabel(IEnumerable<string> labels)
+    {
+        return labels.Any(IsBlockerLabel);
+    }
+
+    private static bool IsBlockerLabel(string label)
+    {
+        return string.Equals(label, Constants.BlockerLabel, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsInvalidBlockerTaskException(Exception exception)
+    {
+        if (exception is ApiException apiException)
+            return apiException.StatusCode is System.Net.HttpStatusCode.BadRequest or System.Net.HttpStatusCode.NotFound;
+
+        var statusCode = exception.GetType().GetProperty("StatusCode")?.GetValue(exception);
+
+        return statusCode switch
+        {
+            System.Net.HttpStatusCode.BadRequest or System.Net.HttpStatusCode.NotFound => true,
+            400 or 404 => true,
+            _ => false
+        };
+    }
+
+    private sealed record ValidationResult(
+        TodoistTask Task,
+        IReadOnlyCollection<BlockerReference> BlockerReferences,
+        string? Error);
+
+    private sealed record BlockerReference(
+        TodoistTask BlockedTask,
+        string Comment,
+        string BlockerTaskId);
+
+    private sealed record SyncBlockerLabelsResult(
+        IReadOnlyCollection<TodoistTask> UpdatedTasks,
+        IReadOnlyCollection<BlockerReference> InvalidReferences);
 }

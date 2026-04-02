@@ -15,7 +15,8 @@ internal sealed class UnusedLabelsCleanupRule(
         Constants.ImpactLable,
         Constants.InactiveLabel,
         Constants.SubtaskLabel,
-        Constants.BlockedLabel
+        Constants.BlockedLabel,
+        Constants.BlockerLabel
     ];
 
     public int Order => 8;
