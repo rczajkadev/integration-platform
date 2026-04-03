@@ -13,7 +13,7 @@ cd $root_dir
 mkdir ./integrations/$name
 
 dotnet new integration -n $name -o ./integrations/$name
-dotnet sln add ./integrations/$name/**/*.csproj -s integrations
+dotnet sln add ./integrations/$name/**/*.csproj -s integrations/$name
 
 mv ./integrations/$name/.github/workflows/* ./.github/workflows
 rm -rf ./integrations/$name/.github
