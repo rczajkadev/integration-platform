@@ -10,6 +10,9 @@
   <Folder Name="/integrations/GoogleDrive/">
     <Project Path="integrations/GoogleDrive/src/GoogleDrive.csproj" />
   </Folder>
+  <Folder Name="/integrations/Lotto/">
+    <Project Path="integrations/Lotto/src/Lotto.csproj" />
+  </Folder>
   <Folder Name="/integrations/Todoist/">
     <Project Path="integrations/Todoist/src/Todoist.csproj" />
     <Project Path="integrations/Todoist/tests/Todoist.Tests.csproj" />
