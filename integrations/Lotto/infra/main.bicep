@@ -5,7 +5,12 @@ param sharedStorageAccountName string
 param sharedKeyVaultName string
 param sharedServiceBusNamespaceName string
 param sharedAppInsightsName string
-param cronSchedule string
+param notificationsEnabled bool
+param notificationsBaseUrl string
+param notificationsFunctionKeySecretName string
+param lottoBaseUrl string
+param lottoApiKeySecretName string
+param checkLatestResultsSchedule string
 param timeZone string
 
 module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
@@ -15,8 +20,28 @@ module functionApp '../../../infrastructure/modules/functionApp.bicep' = {
     integrationName: integrationName
     customAppSettings: [
       {
-        name: 'CronSchedule'
-        value: cronSchedule
+        name: 'LottoBaseUrl'
+        value: lottoBaseUrl
+      }
+      {
+        name: 'LottoApiKey'
+        value: '@Microsoft.KeyVault(VaultName=${sharedKeyVaultName};SecretName=${lottoApiKeySecretName})'
+      }
+      {
+        name: 'Notifications__Enabled'
+        value: notificationsEnabled
+      }
+      {
+        name: 'Notifications__BaseUrl'
+        value: notificationsBaseUrl
+      }
+      {
+        name: 'Notifications__FunctionKey'
+        value: '@Microsoft.KeyVault(VaultName=${sharedKeyVaultName};SecretName=${notificationsFunctionKeySecretName})'
+      }
+      {
+        name: 'CheckLatestResultsSchedule'
+        value: checkLatestResultsSchedule
       }
     ]
     sharedAppServicePlanName: sharedAppServicePlanName

@@ -1,0 +1,17 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "WEBSITE_TIME_ZONE": "Central European Standard Time",
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "APPLICATIONINSIGHTS_CONNECTION_STRING": "",
+    "ServiceBusConnectionString": "",
+    "LottoBaseUrl": "https://developers.lotto.pl/api/",
+    "LottoApiKey": "",
+    "CheckLatestResultsSchedule": "0 45 22 * * 2,4,6",
+    "Notifications__Enabled": "false",
+    "Notifications__BaseUrl": "",
+    "Notifications__FunctionKey": "",
+    "Notifications__To": ""
+  }
+}
