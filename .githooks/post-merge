@@ -2,4 +2,6 @@
 
 set -e
 
-dotnet restore
+root_dir=$(git rev-parse --show-toplevel)
+
+dotnet restore "$root_dir"
