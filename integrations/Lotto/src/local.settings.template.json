@@ -8,7 +8,7 @@
     "ServiceBusConnectionString": "",
     "LottoBaseUrl": "https://developers.lotto.pl/api/",
     "LottoApiKey": "",
-    "CheckLatestResultsSchedule": "0 45 22 * * 2,4,6",
+    "CheckLatestResultsSchedule": "0 0 23 * * 2,4,6",
     "Notifications__Enabled": "false",
     "Notifications__BaseUrl": "",
     "Notifications__FunctionKey": "",
