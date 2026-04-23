@@ -38,7 +38,7 @@ public sealed class BlockedTaskCommentRuleTests
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockerLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response<TodoistTask>()));
 
-        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<CancellationToken>())
+        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response<TodoistComment>()));
 
         var rule = CreateRule();
@@ -59,7 +59,7 @@ public sealed class BlockedTaskCommentRuleTests
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockerLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(CreateTask("123456789", "Blocking task", [Constants.BlockerLabel]))));
 
-        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<CancellationToken>())
+        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(CreateComment("comment-1", task.Id, "[blocker] https://app.todoist.com/app/task/123456789"))));
         _todoist.GetTaskAsync("123456789", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(CreateTask("123456789", "Blocking task", [Constants.BlockerLabel])));
@@ -82,7 +82,7 @@ public sealed class BlockedTaskCommentRuleTests
             .Returns(Task.FromResult(Response(blockedTask)));
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockerLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response<TodoistTask>()));
-        _todoist.GetCommentsByTaskAsync(blockedTask.Id, Arg.Any<CancellationToken>())
+        _todoist.GetCommentsByTaskAsync(blockedTask.Id, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(
                 CreateComment("comment-1", blockedTask.Id, "[blocker] https://app.todoist.com/app/task/blocking-task-123456789"))));
         _todoist.GetTaskAsync("123456789", Arg.Any<CancellationToken>())
@@ -110,7 +110,7 @@ public sealed class BlockedTaskCommentRuleTests
                 CreateTask("123456789", "Blocking task A", [Constants.BlockerLabel]),
                 CreateTask("987654321", "Blocking task B", [Constants.BlockerLabel]))));
 
-        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<CancellationToken>())
+        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(
                 CreateComment("comment-1", task.Id, "[blocker] https://app.todoist.com/app/task/123456789"),
                 CreateComment("comment-2", task.Id, "[blocker] https://app.todoist.com/app/task/987654321"))));
@@ -138,7 +138,7 @@ public sealed class BlockedTaskCommentRuleTests
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockerLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(CreateTask("123456789", "Blocking task", [Constants.BlockerLabel]))));
 
-        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<CancellationToken>())
+        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(
                 CreateComment("comment-1", task.Id, "[blocker] https://app.todoist.com/app/task/123456789"),
                 CreateComment("comment-2", task.Id, invalidComment))));
@@ -164,7 +164,7 @@ public sealed class BlockedTaskCommentRuleTests
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockerLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response<TodoistTask>()));
 
-        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<CancellationToken>())
+        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(CreateComment("comment-1", task.Id, invalidComment))));
 
         var rule = CreateRule();
@@ -185,7 +185,7 @@ public sealed class BlockedTaskCommentRuleTests
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockerLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(CreateTask("123456789", "Blocking task", [Constants.BlockerLabel]))));
 
-        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<CancellationToken>())
+        _todoist.GetCommentsByTaskAsync(task.Id, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(
                 CreateComment("comment-1", task.Id, "regular note"),
                 CreateComment("comment-2", task.Id, "[blocker] https://app.todoist.com/app/task/123456789"))));
@@ -210,7 +210,7 @@ public sealed class BlockedTaskCommentRuleTests
             .Returns(Task.FromResult(Response(blockedTask)));
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockerLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response<TodoistTask>()));
-        _todoist.GetCommentsByTaskAsync(blockedTask.Id, Arg.Any<CancellationToken>())
+        _todoist.GetCommentsByTaskAsync(blockedTask.Id, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(CreateComment("comment-1", blockedTask.Id, "[blocker] https://app.todoist.com/app/task/123456789"))));
         _todoist.GetTaskAsync("123456789", Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(blockerTask));
@@ -260,7 +260,7 @@ public sealed class BlockedTaskCommentRuleTests
             .Returns(Task.FromResult(Response(blockedTask)));
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockerLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response<TodoistTask>()));
-        _todoist.GetCommentsByTaskAsync(blockedTask.Id, Arg.Any<CancellationToken>())
+        _todoist.GetCommentsByTaskAsync(blockedTask.Id, Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(
                 CreateComment("comment-1", blockedTask.Id, "[blocker] https://app.todoist.com/app/task/blocking-task-123456789"))));
         _todoist.GetTaskAsync("123456789", Arg.Any<CancellationToken>())

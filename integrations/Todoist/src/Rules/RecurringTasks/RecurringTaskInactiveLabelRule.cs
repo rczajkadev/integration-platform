@@ -32,7 +32,12 @@ internal sealed class RecurringTaskInactiveLabelRule(
 
         logger.LogInformation("Fetching tasks from Recurring project...");
 
-        var tasksInRecurringProject = (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken))
+        var recurringProjectTasks = (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken))
+            .ToList();
+
+        EnsureOnlyRecurringProjectTasks(recurringProjectTasks);
+
+        var tasksInRecurringProject = recurringProjectTasks
             .Where(task => string.IsNullOrWhiteSpace(task.ParentId))
             .ToList();
 
@@ -60,6 +65,20 @@ internal sealed class RecurringTaskInactiveLabelRule(
         }
 
         ReportNonRecurringDueDates(tasksWithNonRecurringDueDate, context);
+    }
+
+    private void EnsureOnlyRecurringProjectTasks(IEnumerable<TodoistTask> tasks)
+    {
+        var tasksOutsideRecurringProject = tasks
+            .Where(task => !string.Equals(task.ProjectId, _recurringProjectId, StringComparison.Ordinal))
+            .ToArray();
+
+        if (tasksOutsideRecurringProject.Length == 0) return;
+
+        var taskIds = string.Join(", ", tasksOutsideRecurringProject.Select(task => task.Id));
+        throw new InvalidOperationException(
+            $"Todoist returned {tasksOutsideRecurringProject.Length} tasks outside the configured Recurring project. " +
+            $"Project filtering is not safe. Task IDs: {taskIds}");
     }
 
     private static void ApplyRules(

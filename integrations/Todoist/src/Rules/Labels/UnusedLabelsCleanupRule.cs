@@ -26,7 +26,7 @@ internal sealed class UnusedLabelsCleanupRule(
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)
     {
         logger.LogInformation("Fetching labels for cleanup...");
-        var labels = (await todoist.GetLabelsAsync(cancellationToken)).Results.ToArray();
+        var labels = (await todoist.GetLabelsAsync(cancellationToken)).ToArray();
 
         if (labels.Length == 0)
         {

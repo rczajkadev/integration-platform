@@ -6,12 +6,13 @@ internal interface ITodoistApi
 {
     [Get("/labels?limit=200")]
     Task<TodoistResponse<TodoistLabel>> GetLabelsAsync(
+        [Query] string? cursor = null,
         CancellationToken cancellationToken = default);
 
-    [Get("/tasks?ids={ids}&cursor={cursor}")]
+    [Get("/tasks?ids={ids}&limit=200")]
     Task<TodoistResponse<TodoistTask>> GetTasksAsync(
         string ids,
-        string? cursor = null,
+        [Query] string? cursor = null,
         CancellationToken cancellationToken = default);
 
     [Get("/tasks/{taskId}")]
@@ -19,26 +20,27 @@ internal interface ITodoistApi
         string taskId,
         CancellationToken cancellationToken = default);
 
-    [Get("/tasks?cursor={cursor}")]
+    [Get("/tasks?limit=200")]
     Task<TodoistResponse<TodoistTask>> GetTasksAsync(
-        string? cursor = null,
+        [Query] string? cursor = null,
         CancellationToken cancellationToken = default);
 
-    [Get("/tasks?project_id={projectId}&cursor={cursor}")]
+    [Get("/tasks?project_id={projectId}&limit=200")]
     Task<TodoistResponse<TodoistTask>> GetTasksByProjectAsync(
         string projectId,
-        string? cursor = null,
+        [Query] string? cursor = null,
         CancellationToken cancellationToken = default);
 
-    [Get("/tasks/filter?query={query}&cursor={cursor}")]
+    [Get("/tasks/filter?query={query}&limit=200")]
     Task<TodoistResponse<TodoistTask>> GetTasksByFilterAsync(
         string query,
-        string? cursor = null,
+        [Query] string? cursor = null,
         CancellationToken cancellationToken = default);
 
     [Get("/comments?task_id={taskId}&limit=200")]
     Task<TodoistResponse<TodoistComment>> GetCommentsByTaskAsync(
         string taskId,
+        [Query] string? cursor = null,
         CancellationToken cancellationToken = default);
 
     [Post("/tasks/{taskId}")]

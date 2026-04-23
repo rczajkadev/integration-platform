@@ -18,10 +18,12 @@ internal sealed class CachedTodoistApi(
     private readonly ConcurrentDictionary<string, byte> _commentKeys = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<string, byte> _labelKeys = new(StringComparer.Ordinal);
 
-    public Task<TodoistResponse<TodoistLabel>> GetLabelsAsync(CancellationToken cancellationToken = default)
+    public Task<TodoistResponse<TodoistLabel>> GetLabelsAsync(
+        string? cursor = null,
+        CancellationToken cancellationToken = default)
     {
-        const string key = "labels:all";
-        return GetOrCreateAsync(key, _labelKeys, () => api.GetLabelsAsync(cancellationToken));
+        var key = $"labels:all:cursor:{GetCacheCursorKey(cursor)}";
+        return GetOrCreateAsync(key, _labelKeys, () => api.GetLabelsAsync(cursor, cancellationToken));
     }
 
     public Task<TodoistResponse<TodoistTask>> GetTasksAsync(
@@ -29,7 +31,7 @@ internal sealed class CachedTodoistApi(
         string? cursor = null,
         CancellationToken cancellationToken = default)
     {
-        var key = $"tasks:ids:{ids}:cursor:{cursor ?? "<null>"}";
+        var key = $"tasks:ids:{ids}:cursor:{GetCacheCursorKey(cursor)}";
         return GetOrCreateAsync(key, _taskKeys, () => api.GetTasksAsync(ids, cursor, cancellationToken));
     }
 
@@ -45,7 +47,7 @@ internal sealed class CachedTodoistApi(
         string? cursor = null,
         CancellationToken cancellationToken = default)
     {
-        var key = $"tasks:all:cursor:{cursor ?? "<null>"}";
+        var key = $"tasks:all:cursor:{GetCacheCursorKey(cursor)}";
         return GetOrCreateAsync(key, _taskKeys, () => api.GetTasksAsync(cursor, cancellationToken));
     }
 
@@ -54,7 +56,7 @@ internal sealed class CachedTodoistApi(
         string? cursor = null,
         CancellationToken cancellationToken = default)
     {
-        var key = $"tasks:project:{projectId}:cursor:{cursor ?? "<null>"}";
+        var key = $"tasks:project:{projectId}:cursor:{GetCacheCursorKey(cursor)}";
         return GetOrCreateAsync(key, _taskKeys, () => api.GetTasksByProjectAsync(projectId, cursor, cancellationToken));
     }
 
@@ -63,16 +65,17 @@ internal sealed class CachedTodoistApi(
         string? cursor = null,
         CancellationToken cancellationToken = default)
     {
-        var key = $"tasks:filter:{query}:cursor:{cursor ?? "<null>"}";
+        var key = $"tasks:filter:{query}:cursor:{GetCacheCursorKey(cursor)}";
         return GetOrCreateAsync(key, _taskKeys, () => api.GetTasksByFilterAsync(query, cursor, cancellationToken));
     }
 
     public Task<TodoistResponse<TodoistComment>> GetCommentsByTaskAsync(
         string taskId,
+        string? cursor = null,
         CancellationToken cancellationToken = default)
     {
-        var key = $"comments:task:{taskId}";
-        return GetOrCreateAsync(key, _commentKeys, () => api.GetCommentsByTaskAsync(taskId, cancellationToken));
+        var key = $"comments:task:{taskId}:cursor:{GetCacheCursorKey(cursor)}";
+        return GetOrCreateAsync(key, _commentKeys, () => api.GetCommentsByTaskAsync(taskId, cursor, cancellationToken));
     }
 
     public async Task UpdateTaskAsync(
@@ -115,6 +118,9 @@ internal sealed class CachedTodoistApi(
     private void InvalidateTaskEntries() => InvalidateEntries(_taskKeys);
 
     private void InvalidateLabelEntries() => InvalidateEntries(_labelKeys);
+
+    private static string GetCacheCursorKey(string? cursor) =>
+        string.IsNullOrWhiteSpace(cursor) ? "<first-page>" : cursor;
 
     private void InvalidateEntries(ConcurrentDictionary<string, byte> keyRegistry)
     {

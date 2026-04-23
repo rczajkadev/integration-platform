@@ -72,7 +72,7 @@ internal sealed class BlockedTaskCommentRule(
 
     private async Task<ValidationResult> ValidateCommentsAsync(TodoistTask task, CancellationToken cancellationToken)
     {
-        var blockerComments = (await todoist.GetCommentsByTaskAsync(task.Id, cancellationToken)).Results
+        var blockerComments = (await todoist.GetCommentsByTaskAsync(task.Id, cancellationToken))
             .Select(comment => comment.Content.Trim())
             .Where(comment => comment.StartsWith(BlockerCommentPrefix, StringComparison.Ordinal))
             .ToArray();

@@ -4,75 +4,23 @@ internal static class Extensions
 {
     extension(ITodoistApi api)
     {
-        public async Task<IEnumerable<TodoistTask>> GetTasksAsync(
-            IList<string> ids,
-            CancellationToken cancellationToken = default)
-        {
-            TodoistResponse<TodoistTask>? response = null;
-            List<TodoistTask> tasks = [];
+        public Task<IEnumerable<TodoistLabel>> GetLabelsAsync(CancellationToken ct = default) =>
+            GetAllPagesAsync(cursor => api.GetLabelsAsync(cursor, ct));
 
-            do
-            {
-                response = await api.GetTasksAsync(string.Join(",", ids), response?.NextCursor, cancellationToken);
-                tasks.AddRange(response.Results);
-            }
-            while (!string.IsNullOrWhiteSpace(response.NextCursor));
+        public Task<IEnumerable<TodoistTask>> GetTasksAsync(IList<string> ids, CancellationToken ct = default) =>
+            GetAllPagesAsync(cursor => api.GetTasksAsync(string.Join(",", ids), cursor, ct));
 
-            return tasks;
-        }
+        public Task<IEnumerable<TodoistTask>> GetTasksAsync(CancellationToken ct = default) =>
+            GetAllPagesAsync(cursor => api.GetTasksAsync(cursor, ct));
 
-        public async Task<IEnumerable<TodoistTask>> GetTasksAsync(
-            CancellationToken cancellationToken = default)
-        {
-            TodoistResponse<TodoistTask>? response = null;
-            List<TodoistTask> tasks = [];
+        public Task<IEnumerable<TodoistTask>> GetTasksByProjectAsync(string projectId, CancellationToken ct = default) =>
+            GetAllPagesAsync(cursor => api.GetTasksByProjectAsync(projectId, cursor, ct));
 
-            do
-            {
-                response = await api.GetTasksAsync(response?.NextCursor, cancellationToken);
-                tasks.AddRange(response.Results);
-            }
-            while (!string.IsNullOrWhiteSpace(response.NextCursor));
+        public Task<IEnumerable<TodoistTask>> GetTasksByFilterAsync(string query, CancellationToken ct = default) =>
+            GetAllPagesAsync(cursor => api.GetTasksByFilterAsync(query, cursor, ct));
 
-            return tasks;
-        }
-
-        public async Task<IEnumerable<TodoistTask>> GetTasksByProjectAsync(
-            string projectId,
-            CancellationToken cancellationToken = default)
-        {
-            if (string.IsNullOrWhiteSpace(projectId))
-                return [];
-
-            TodoistResponse<TodoistTask>? response = null;
-            List<TodoistTask> tasks = [];
-
-            do
-            {
-                response = await api.GetTasksByProjectAsync(projectId, response?.NextCursor, cancellationToken);
-                tasks.AddRange(response.Results);
-            }
-            while (!string.IsNullOrWhiteSpace(response.NextCursor));
-
-            return tasks;
-        }
-
-        public async Task<IEnumerable<TodoistTask>> GetTasksByFilterAsync(
-            string query,
-            CancellationToken cancellationToken = default)
-        {
-            TodoistResponse<TodoistTask>? response = null;
-            List<TodoistTask> tasks = [];
-
-            do
-            {
-                response = await api.GetTasksByFilterAsync(query, response?.NextCursor, cancellationToken);
-                tasks.AddRange(response.Results);
-            }
-            while (!string.IsNullOrWhiteSpace(response.NextCursor));
-
-            return tasks;
-        }
+        public Task<IEnumerable<TodoistComment>> GetCommentsByTaskAsync(string taskId, CancellationToken ct = default) =>
+            GetAllPagesAsync(cursor => api.GetCommentsByTaskAsync(taskId, cursor, ct));
 
         public async Task<int> UpdateTasksAsync(
             IEnumerable<TodoistTask> tasks,
@@ -128,6 +76,22 @@ internal static class Extensions
 
             await Task.WhenAll(apiCallTasks);
             return deleteCounter;
+        }
+
+        private static async Task<IEnumerable<T>> GetAllPagesAsync<T>(
+            Func<string?, Task<TodoistResponse<T>>> getPageAsync) where T : ITodoistItem
+        {
+            TodoistResponse<T>? response = null;
+            List<T> items = [];
+
+            do
+            {
+                response = await getPageAsync(response?.NextCursor);
+                items.AddRange(response.Results);
+            }
+            while (!string.IsNullOrWhiteSpace(response.NextCursor));
+
+            return items;
         }
     }
 }
