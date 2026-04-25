@@ -25,6 +25,7 @@ internal sealed class BlockedTaskReportRule(
             .OrderBy(task => task.Content, StringComparer.OrdinalIgnoreCase)
             .ThenBy(task => task.Id, StringComparer.Ordinal)
             .ToArray();
+        TodoistGuards.EnsureAllTasksContainLabel(blockedTasks, Constants.BlockedLabel, nameof(BlockedTaskReportRule));
 
         logger.LogInformation("Fetching tasks with the {Label} label for blocker task report...", Constants.BlockerLabel);
 
@@ -32,6 +33,10 @@ internal sealed class BlockedTaskReportRule(
             .OrderBy(task => task.Content, StringComparer.OrdinalIgnoreCase)
             .ThenBy(task => task.Id, StringComparer.Ordinal)
             .ToArray();
+        TodoistGuards.EnsureAllTasksContainLabel(
+            blockerTasks,
+            Constants.BlockerLabel,
+            $"{nameof(BlockedTaskReportRule)} blocker fetch");
 
         if (blockedTasks.Length == 0 && blockerTasks.Length == 0)
         {

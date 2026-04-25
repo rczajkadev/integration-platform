@@ -29,7 +29,15 @@ internal sealed class RecurringTaskInactiveReportRule(
 
         logger.LogInformation("Fetching tasks from Recurring project for inactive report...");
 
-        var inactiveTasks = (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken))
+        var recurringProjectTasks = (await todoist.GetTasksByProjectAsync(_recurringProjectId, cancellationToken))
+            .ToArray();
+
+        TodoistGuards.EnsureOnlyProjectTasks(
+            recurringProjectTasks,
+            _recurringProjectId,
+            nameof(RecurringTaskInactiveReportRule));
+
+        var inactiveTasks = recurringProjectTasks
             .Where(task => string.IsNullOrWhiteSpace(task.ParentId))
             .Where(task => task.Labels.Any(IsInactiveLabel))
             .OrderBy(task => task.Content, StringComparer.OrdinalIgnoreCase)

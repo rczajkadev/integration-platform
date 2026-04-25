@@ -55,7 +55,8 @@ internal sealed class SubtaskDueDateRule(
 
     private async Task<List<TodoistTask>> FetchSubtasksAsync(CancellationToken cancellationToken)
     {
-        return [..(await todoist.GetTasksByFilterAsync(SubtaskFilter, cancellationToken))
-            .Where(task => !string.IsNullOrWhiteSpace(task.ParentId))];
+        var subtasks = (await todoist.GetTasksByFilterAsync(SubtaskFilter, cancellationToken)).ToArray();
+        TodoistGuards.EnsureAllTasksAreSubtasks(subtasks, nameof(SubtaskDueDateRule));
+        return [.. subtasks];
     }
 }

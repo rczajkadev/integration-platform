@@ -55,6 +55,11 @@ internal sealed class UnusedLabelsCleanupRule(
             return;
         }
 
+        TodoistGuards.EnsureNoProtectedLabelsAreDeleted(
+            labelsToDelete,
+            ExcludedLabels,
+            nameof(UnusedLabelsCleanupRule));
+
         logger.LogInformation("Deleting {LabelCount} unused labels...", labelsToDelete.Count);
         var deletedCount = await todoist.DeleteLabelsAsync(labelsToDelete, cancellationToken: cancellationToken);
 

@@ -62,8 +62,9 @@ internal sealed class SubtaskLabelRule(
 
     private async Task<List<TodoistTask>> FetchSubtasksAsync(CancellationToken cancellationToken)
     {
-        return [..(await todoist.GetTasksByFilterAsync(SubtaskFilter, cancellationToken))
-            .Where(task => !string.IsNullOrWhiteSpace(task.ParentId))];
+        var subtasks = (await todoist.GetTasksByFilterAsync(SubtaskFilter, cancellationToken)).ToArray();
+        TodoistGuards.EnsureAllTasksAreSubtasks(subtasks, nameof(SubtaskLabelRule));
+        return [.. subtasks];
     }
 
     private async Task<IReadOnlyCollection<TodoistTask>> ApplySubtaskLabelUpdatesAsync(
@@ -102,7 +103,12 @@ internal sealed class SubtaskLabelRule(
 
         logger.LogInformation("Updating parent labels...");
 
-        var parents = (await todoist.GetTasksAsync([.. parentLabelsToAdd.Keys], cancellationToken)).ToList();
+        var parentIds = parentLabelsToAdd.Keys.ToArray();
+        var parents = (await todoist.GetTasksAsync(parentIds, cancellationToken)).ToList();
+        TodoistGuards.EnsureOnlyExpectedTaskIds(
+            parents,
+            parentIds,
+            $"{nameof(SubtaskLabelRule)} parent fetch");
 
         var updatedCount = await todoist.UpdateTasksAsync(
             parents,

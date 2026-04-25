@@ -49,7 +49,11 @@ internal sealed class NonSubtaskLabelRule(
 
     private async Task<List<TodoistTask>> FetchNonSubtasksWithSubtaskLabelAsync(CancellationToken cancellationToken)
     {
-        return [.. await todoist.GetTasksByFilterAsync(NonSubtaskWithSubtaskLabelFilter, cancellationToken)];
+        var tasks = (await todoist.GetTasksByFilterAsync(NonSubtaskWithSubtaskLabelFilter, cancellationToken)).ToArray();
+        TodoistGuards.EnsureAllTasksAreTopLevel(tasks, nameof(NonSubtaskLabelRule));
+        TodoistGuards.EnsureAllTasksContainLabel(tasks, Constants.SubtaskLabel, nameof(NonSubtaskLabelRule));
+
+        return [.. tasks];
     }
 
     private static bool IsSubtaskLabel(string label)

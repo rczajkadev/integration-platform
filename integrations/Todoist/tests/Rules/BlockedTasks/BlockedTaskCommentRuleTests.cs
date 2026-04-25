@@ -31,7 +31,7 @@ public sealed class BlockedTaskCommentRuleTests
     [Fact]
     public async Task ExecuteAsync_ShouldReportMissingBlockerComment_WhenBlockedTaskHasNoBlockerComment()
     {
-        var task = CreateTask("blocked-1", "Blocked task");
+        var task = CreateBlockedTask("blocked-1", "Blocked task");
 
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockedLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(task)));
@@ -52,7 +52,7 @@ public sealed class BlockedTaskCommentRuleTests
     [Fact]
     public async Task ExecuteAsync_ShouldNotReport_WhenBlockedTaskHasSingleValidBlockerComment()
     {
-        var task = CreateTask("blocked-1", "Blocked task");
+        var task = CreateBlockedTask("blocked-1", "Blocked task");
 
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockedLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(task)));
@@ -75,7 +75,7 @@ public sealed class BlockedTaskCommentRuleTests
     [Fact]
     public async Task ExecuteAsync_ShouldExtractTaskIdFromSluggedTodoistUrl()
     {
-        var blockedTask = CreateTask("blocked-1", "Blocked task");
+        var blockedTask = CreateBlockedTask("blocked-1", "Blocked task");
         var blockerTask = CreateTask("123456789", "Blocking task");
 
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockedLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
@@ -101,7 +101,7 @@ public sealed class BlockedTaskCommentRuleTests
     [Fact]
     public async Task ExecuteAsync_ShouldNotReport_WhenAllBlockerCommentsAreValid()
     {
-        var task = CreateTask("blocked-1", "Blocked task");
+        var task = CreateBlockedTask("blocked-1", "Blocked task");
 
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockedLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(task)));
@@ -130,7 +130,7 @@ public sealed class BlockedTaskCommentRuleTests
     [Fact]
     public async Task ExecuteAsync_ShouldReportInvalidBlockerUrl_WhenAnyBlockerCommentIsInvalid()
     {
-        var task = CreateTask("blocked-1", "Blocked task");
+        var task = CreateBlockedTask("blocked-1", "Blocked task");
         const string invalidComment = "[blocker] https://example.com/task/123";
 
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockedLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
@@ -156,7 +156,7 @@ public sealed class BlockedTaskCommentRuleTests
     [Fact]
     public async Task ExecuteAsync_ShouldReportInvalidBlockerUrl_WhenBlockerCommentUsesNonTodoistUrl()
     {
-        var task = CreateTask("blocked-1", "Blocked task");
+        var task = CreateBlockedTask("blocked-1", "Blocked task");
         const string invalidComment = "[blocker] https://google.com/task/123";
 
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockedLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
@@ -178,7 +178,7 @@ public sealed class BlockedTaskCommentRuleTests
     [Fact]
     public async Task ExecuteAsync_ShouldIgnoreNonBlockerComments_WhenValidBlockerCommentExists()
     {
-        var task = CreateTask("blocked-1", "Blocked task");
+        var task = CreateBlockedTask("blocked-1", "Blocked task");
 
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockedLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(task)));
@@ -203,7 +203,7 @@ public sealed class BlockedTaskCommentRuleTests
     [Fact]
     public async Task ExecuteAsync_ShouldAddBlockerLabel_WhenReferencedTaskDoesNotHaveIt()
     {
-        var blockedTask = CreateTask("blocked-1", "Blocked task");
+        var blockedTask = CreateBlockedTask("blocked-1", "Blocked task");
         var blockerTask = CreateTask("123456789", "Blocking task");
 
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockedLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
@@ -254,7 +254,7 @@ public sealed class BlockedTaskCommentRuleTests
     [Fact]
     public async Task ExecuteAsync_ShouldSkipInvalidBlockerTaskIdAndReportIt()
     {
-        var blockedTask = CreateTask("blocked-1", "Blocked task");
+        var blockedTask = CreateBlockedTask("blocked-1", "Blocked task");
 
         _todoist.GetTasksByFilterAsync($"@{Constants.BlockedLabel}", Arg.Any<string?>(), Arg.Any<CancellationToken>())
             .Returns(Task.FromResult(Response(blockedTask)));
@@ -288,6 +288,9 @@ public sealed class BlockedTaskCommentRuleTests
 
     private static TodoistTask CreateTask(string id, string content, params string[] labels) =>
         new(id, "project-1", string.Empty, labels, null, content, string.Empty);
+
+    private static TodoistTask CreateBlockedTask(string id, string content) =>
+        CreateTask(id, content, Constants.BlockedLabel);
 
     private static TodoistComment CreateComment(string id, string taskId, string content) =>
         new(id, taskId, content);

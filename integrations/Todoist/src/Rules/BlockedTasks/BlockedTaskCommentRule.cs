@@ -25,6 +25,7 @@ internal sealed class BlockedTaskCommentRule(
     {
         logger.LogInformation("Fetching tasks with the {Label} label...", Constants.BlockedLabel);
         var blockedTasks = (await todoist.GetTasksByFilterAsync(BlockedFilter, cancellationToken)).ToArray();
+        TodoistGuards.EnsureAllTasksContainLabel(blockedTasks, Constants.BlockedLabel, nameof(BlockedTaskCommentRule));
 
         if (blockedTasks.Length == 0)
             logger.LogInformation("No blocked tasks found.");
@@ -99,6 +100,10 @@ internal sealed class BlockedTaskCommentRule(
     {
         logger.LogInformation("Fetching tasks with the {Label} label...", Constants.BlockerLabel);
         var currentBlockerTasks = (await todoist.GetTasksByFilterAsync(BlockerFilter, cancellationToken)).ToArray();
+        TodoistGuards.EnsureAllTasksContainLabel(
+            currentBlockerTasks,
+            Constants.BlockerLabel,
+            $"{nameof(BlockedTaskCommentRule)} blocker fetch");
 
         var desiredBlockerTaskIdSet = new HashSet<string>(StringComparer.Ordinal);
         var blockerTasksToAdd = new List<TodoistTask>();
@@ -110,6 +115,10 @@ internal sealed class BlockedTaskCommentRule(
             try
             {
                 var blockerTask = await todoist.GetTaskAsync(referencesByTaskId.Key, cancellationToken);
+                TodoistGuards.EnsureOnlyExpectedTaskIds(
+                    [blockerTask],
+                    [referencesByTaskId.Key],
+                    $"{nameof(BlockedTaskCommentRule)} blocker task fetch");
                 desiredBlockerTaskIdSet.Add(blockerTask.Id);
 
                 if (!HasBlockerLabel(blockerTask.Labels))
