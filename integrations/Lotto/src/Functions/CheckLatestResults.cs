@@ -13,6 +13,7 @@ internal sealed class CheckLatestResults(
     ILogger<CheckLatestResults> logger)
 {
     [Function(nameof(CheckLatestResults))]
+    [ExponentialBackoffRetry(3, "00:15:00", "01:00:00")]
     public async Task RunAsync(
         [TimerTrigger(
             "%CheckLatestResultsSchedule%",
