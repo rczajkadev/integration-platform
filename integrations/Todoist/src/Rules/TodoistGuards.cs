@@ -64,6 +64,17 @@ internal static class TodoistGuards
             "Received tasks outside the expected ID set.");
     }
 
+    public static void EnsureAllTasksHaveDeadline(
+        IEnumerable<TodoistTask> tasks,
+        string operationName)
+    {
+        EnsureTasks(
+            tasks,
+            task => !string.IsNullOrWhiteSpace(task.Deadline?.Date),
+            operationName,
+            "Expected every task to have a deadline.");
+    }
+
     public static void EnsureNoProtectedLabelsAreDeleted(
         IEnumerable<TodoistLabel> labels,
         IEnumerable<string> protectedLabels,

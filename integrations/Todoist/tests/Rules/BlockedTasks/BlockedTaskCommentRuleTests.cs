@@ -287,7 +287,7 @@ public sealed class BlockedTaskCommentRuleTests
         new(items, string.Empty);
 
     private static TodoistTask CreateTask(string id, string content, params string[] labels) =>
-        new(id, "project-1", string.Empty, labels, null, content, string.Empty);
+        new(id, "project-1", string.Empty, labels, null, null, content, string.Empty);
 
     private static TodoistTask CreateBlockedTask(string id, string content) =>
         CreateTask(id, content, Constants.BlockedLabel);

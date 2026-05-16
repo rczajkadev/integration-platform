@@ -11,6 +11,16 @@ internal sealed record TodoistResponse<T>(
     IEnumerable<T> Results,
     string NextCursor) where T : ITodoistItem;
 
+internal sealed record TodoistTask(
+    string Id,
+    string ProjectId,
+    string ParentId,
+    IEnumerable<string> Labels,
+    TodoistTaskDue? Due,
+    TodoistTaskDeadline? Deadline,
+    string Content,
+    string Description) : ITodoistItem;
+
 internal sealed record TodoistLabel(
     string Id,
     string Name) : ITodoistItem;
@@ -20,18 +30,13 @@ internal sealed record TodoistComment(
     string TaskId,
     string Content) : ITodoistItem;
 
-internal sealed record TodoistTask(
-    string Id,
-    string ProjectId,
-    string ParentId,
-    IEnumerable<string> Labels,
-    TodoistTaskDue? Due,
-    string Content,
-    string Description) : ITodoistItem;
-
 internal sealed record TodoistTaskDue(
     bool IsRecurring,
     string? String,
     string? Date,
     [JsonProperty(PropertyName = "datetime")] string? DateTime,
     string? Timezone);
+
+internal sealed record TodoistTaskDeadline(
+    string Date,
+    string? Lang);
