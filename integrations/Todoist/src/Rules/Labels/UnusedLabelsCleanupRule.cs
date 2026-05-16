@@ -22,8 +22,6 @@ internal sealed class UnusedLabelsCleanupRule(
         Constants.BlockerLabel
     ];
 
-    public int Order => 8;
-
     /// <inheritdoc />
     /// <seealso cref="UnusedLabelsCleanupRule" />
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)

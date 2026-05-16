@@ -13,8 +13,6 @@ internal sealed class SubtaskDueDateRule(
     ITodoistApi todoist,
     ILogger<SubtaskDueDateRule> logger) : ITodoistRule
 {
-    public int Order => 3;
-
     private const string RemoveDueDateValue = "no due date";
     private const string SubtaskFilter = "subtask";
 

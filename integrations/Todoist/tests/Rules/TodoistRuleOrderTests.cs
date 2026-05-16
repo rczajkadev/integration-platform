@@ -1,3 +1,4 @@
+using System;
 using Integrations.Todoist.Options;
 using Integrations.Todoist.Rules;
 using Integrations.Todoist.TodoistClient;
@@ -9,42 +10,43 @@ namespace Integrations.Todoist.Tests.Rules;
 public sealed class TodoistRuleOrderTests
 {
     [Fact]
-    public void EveryRule_ShouldHavePositiveOrder()
+    public void OrderedTypes_ShouldContainEveryRegisteredRuleExactlyOnce()
     {
         var rules = ResolveRules();
 
-        Assert.NotEmpty(rules);
-        Assert.All(rules, rule => Assert.True(rule.Order > 0, $"{rule.GetType().FullName} has non-positive order."));
-    }
-
-    [Fact]
-    public void RuleOrders_ShouldBeUnique()
-    {
-        var rules = ResolveRules();
-
-        var duplicateOrders = rules
-            .GroupBy(rule => rule.Order)
-            .Where(group => group.Count() > 1)
-            .Select(group => $"{group.Key} => {string.Join(", ", group.Select(rule => rule.GetType().FullName))}")
+        var registeredRuleTypes = rules
+            .Select(rule => rule.GetType())
+            .Distinct()
+            .OrderBy(type => type.FullName, StringComparer.Ordinal)
             .ToArray();
 
-        Assert.True(
-            duplicateOrders.Length == 0,
-            $"Duplicate rule order numbers detected: {string.Join(" | ", duplicateOrders)}");
+        var orderedRuleTypes = TodoistRuleOrder.OrderedTypes
+            .OrderBy(type => type.FullName, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(registeredRuleTypes);
+        Assert.Equal(registeredRuleTypes, orderedRuleTypes);
     }
 
     [Fact]
-    public void RuleOrders_ShouldBeContiguous_FromOneToN()
+    public void OrderedTypes_ShouldNotContainDuplicates()
     {
-        var rules = ResolveRules().OrderBy(rule => rule.Order).ToArray();
-
-        var actual = rules.Select(rule => rule.Order).ToArray();
-        var expected = Enumerable.Range(1, rules.Length).ToArray();
-
-        Assert.Equal(expected, actual);
+        Assert.Equal(
+            TodoistRuleOrder.OrderedTypes.Count,
+            TodoistRuleOrder.OrderedTypes.Distinct().Count());
     }
 
-    private static ITodoistRule[] ResolveRules()
+    [Fact]
+    public void Resolve_ShouldReturnRulesInCentralOrder_WhenAllRulesAreConfigured()
+    {
+        var rules = ResolveRules();
+
+        var orderedRules = TodoistRuleOrder.Resolve(rules);
+
+        Assert.Equal(TodoistRuleOrder.OrderedTypes, orderedRules.Select(rule => rule.GetType()).ToArray());
+    }
+
+    private static ITodoistRule[] ResolveRules(ITodoistApi? todoist = null)
     {
         var services = new ServiceCollection();
         services.AddLogging();
@@ -53,11 +55,12 @@ public sealed class TodoistRuleOrderTests
             {
                 Recurring = "test-project-id"
             }));
-        services.AddSingleton(Substitute.For<ITodoistApi>());
+        services.AddSingleton(todoist ?? Substitute.For<ITodoistApi>());
         services.AddTodoistRules();
 
         using var serviceProvider = services.BuildServiceProvider();
         using var scope = serviceProvider.CreateScope();
         return [.. scope.ServiceProvider.GetServices<ITodoistRule>()];
     }
+
 }

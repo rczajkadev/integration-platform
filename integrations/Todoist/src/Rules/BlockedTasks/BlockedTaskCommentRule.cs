@@ -20,8 +20,6 @@ internal sealed class BlockedTaskCommentRule(
     private const string BlockerCommentPrefix = "[blocker]";
     private const string TodoistTaskPathPrefix = "/app/task/";
 
-    public int Order => 6;
-
     /// <inheritdoc />
     /// <seealso cref="BlockedTaskCommentRule" />
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)

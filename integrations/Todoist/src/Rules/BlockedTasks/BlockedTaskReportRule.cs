@@ -13,8 +13,6 @@ internal sealed class BlockedTaskReportRule(
     private const string BlockedFilter = "@blocked";
     private const string BlockerFilter = "@blocker";
 
-    public int Order => 7;
-
     /// <inheritdoc />
     /// <seealso cref="BlockedTaskReportRule" />
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)

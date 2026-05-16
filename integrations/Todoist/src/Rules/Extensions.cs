@@ -25,7 +25,7 @@ internal static class Extensions
         TodoistRuleContext context,
         CancellationToken cancellationToken)
     {
-        var orderedRules = rules.OrderBy(rule => rule.Order);
+        var orderedRules = TodoistRuleOrder.Resolve(rules);
 
         foreach (var rule in orderedRules)
         {

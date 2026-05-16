@@ -12,8 +12,6 @@ internal sealed class ImpactTaskReportRule(
 {
     private const string ImpactFilter = $"@{Constants.ImpactLable}";
 
-    public int Order => 10;
-
     /// <inheritdoc />
     /// <seealso cref="ImpactTaskReportRule" />
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)

@@ -12,8 +12,6 @@ internal sealed class HighestPriorityTaskReportRule(
 {
     private const string HighestPriorityFilter = "p1";
 
-    public int Order => 9;
-
     /// <inheritdoc />
     /// <seealso cref="HighestPriorityTaskReportRule" />
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)

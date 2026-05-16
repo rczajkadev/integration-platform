@@ -12,8 +12,6 @@ internal sealed class UpcomingDeadlineTaskReportRule(
 {
     private const string UpcomingDeadlineFilter = "deadline after: yesterday & deadline before: in 7 days";
 
-    public int Order => 11;
-
     /// <inheritdoc />
     /// <seealso cref="UpcomingDeadlineTaskReportRule" />
     public async Task ExecuteAsync(TodoistRuleContext context, CancellationToken cancellationToken)

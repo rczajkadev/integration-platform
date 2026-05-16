@@ -13,8 +13,6 @@ internal sealed class RecurringTaskInactiveReportRule(
     IOptions<TodoistProjectIdsOptions> options,
     ILogger<RecurringTaskInactiveReportRule> logger) : ITodoistRule
 {
-    public int Order => 5;
-
     private readonly string _recurringProjectId = options.Value.Recurring;
 
     /// <inheritdoc />
