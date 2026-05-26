@@ -34,7 +34,6 @@ internal sealed record TodoistTaskDue(
     bool IsRecurring,
     string? String,
     string? Date,
-    [JsonProperty(PropertyName = "datetime")] string? DateTime,
     string? Timezone);
 
 internal sealed record TodoistTaskDeadline(
